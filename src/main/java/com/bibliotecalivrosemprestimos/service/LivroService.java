@@ -94,14 +94,14 @@ public class LivroService {
     }
 
 
-//     public List<LivroComEmprestimoDTO> listarLivrosEmprestados() {
-//         return livroRepository.findLivrosEmprestados()
-//                 .stream()
-//                 .map(this::toLivroComEmprestimoDTO)
-//                 .collect(Collectors.toList());
-//     }
+    public List<LivroComEmprestimoDTO> listarLivrosEmprestados() {
+         return livroRepository.findLivrosEmprestados()
+                 .stream()
+                 .map(this::toLivroComEmprestimoDTO)
+                 .collect(Collectors.toList());
+    }
 
-     private LivroComEmprestimoDTO toLivroComEmprestimoDTO(Object[] result) {
+    private LivroComEmprestimoDTO toLivroComEmprestimoDTO(Object[] result) {
          LivroEntity livro = (LivroEntity) result[0];
          EmprestimoEntity emprestimo = (EmprestimoEntity) result[1];
          UsuarioEntity usuario = (UsuarioEntity) result[2];

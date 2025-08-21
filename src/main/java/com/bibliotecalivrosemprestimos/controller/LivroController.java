@@ -1,7 +1,6 @@
 package com.bibliotecalivrosemprestimos.controller;
 
 import java.util.List;
-
 import com.bibliotecalivrosemprestimos.dto.LivroComEmprestimoDTO;
 import com.bibliotecalivrosemprestimos.validation.AtualizarLivroRequest;
 import com.bibliotecalivrosemprestimos.validation.CriarLivroRequest;
@@ -58,10 +57,10 @@ public class LivroController {
         return ResponseEntity.noContent().build();
     }
 
-//   // Relatório de livros emprestados
-//    @GetMapping("/emprestados")
-//    public ResponseEntity<List<LivroComEmprestimoDTO>> listarLivrosEmprestados() {
-//        List<LivroComEmprestimoDTO> livros = livroService.listarLivrosEmprestados();
-//        return ResponseEntity.ok(livros);
-//    }
+   // Relatório de livros emprestados
+    @GetMapping("/emprestados")
+    public ResponseEntity<List<LivroComEmprestimoDTO>> listarLivrosEmprestados() {
+        List<LivroComEmprestimoDTO> livros = livroService.listarLivrosEmprestados();
+        return ResponseEntity.ok(livros);
+    }
 }

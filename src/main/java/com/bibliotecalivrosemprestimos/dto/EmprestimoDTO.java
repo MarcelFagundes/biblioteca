@@ -1,7 +1,6 @@
 package com.bibliotecalivrosemprestimos.dto;
 
 import java.time.LocalDateTime;
-
 import com.bibliotecalivrosemprestimos.entity.EmprestimoEntity;
 
 public record EmprestimoDTO(
