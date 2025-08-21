@@ -62,8 +62,8 @@ src/
 
 ```bash
 # Clone o repositório
-git clone <repository-url>
-cd biblioteca-api
+git clone git@github.com:MarcelFagundes/biblioteca.git
+cd biblioteca
 
 # Compile o projeto
 mvn clean compile
