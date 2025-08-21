@@ -7,15 +7,11 @@ import com.bibliotecalivrosemprestimos.validation.AtualizarLivroRequest;
 import com.bibliotecalivrosemprestimos.validation.CriarLivroRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.bibliotecalivrosemprestimos.dto.LivroDTO;
 import com.bibliotecalivrosemprestimos.entity.LivroEntity;
 import com.bibliotecalivrosemprestimos.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.exception.NotFoundException;
 import com.bibliotecalivrosemprestimos.repository.LivroRepository;
-
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

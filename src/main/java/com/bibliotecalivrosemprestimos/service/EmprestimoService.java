@@ -4,7 +4,6 @@ import com.bibliotecalivrosemprestimos.dto.MultaDTO;
 import com.bibliotecalivrosemprestimos.validation.CriarEmprestimoRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.bibliotecalivrosemprestimos.dto.EmprestimoDTO;
 import com.bibliotecalivrosemprestimos.entity.EmprestimoEntity;
 import com.bibliotecalivrosemprestimos.entity.LivroEntity;
@@ -14,7 +13,6 @@ import com.bibliotecalivrosemprestimos.exception.NotFoundException;
 import com.bibliotecalivrosemprestimos.repository.EmprestimoRepository;
 import com.bibliotecalivrosemprestimos.repository.LivroRepository;
 import com.bibliotecalivrosemprestimos.repository.UsuarioRepository;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
