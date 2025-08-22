@@ -31,25 +31,18 @@ src/
 │   ├── java/
 │   │   └── com/
 │   │       └── biblioteca/
-│   │           ├── api/
-│   │           │   ├── controller/
-│   │           │   ├── dto/
-│   │           │   └── exception/
-│   │           ├── core/
-│   │           │   ├── model/
-│   │           │   ├── service/
-│   │           │   ├── validation/
-│   │           │   └── exception/
-│   │           └── infrastructure/
-│   │               ├── repository/
-│   │               └── config/
+│   │            ├── controller/
+│   │            ├── dto/
+|   |            ├── entity/ 
+│   │            ├── exception/
+|   |            ├── repository/ 
+│   │            ├── service/
+│   │            ├── validation/
+│   │            ├── exception/
+│   │            └── repository/
 │   └── resources/
-│       ├── application.properties
-│       └── data.sql
-└── test/
-    └── java/
-        └── com/
-            └── biblioteca/
+        └── application.properties
+
 ```
 
 ## 🚀 Instalação e Execução
