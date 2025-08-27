@@ -1,11 +1,14 @@
 package com.bibliotecalivrosemprestimos.port.input;
 
-import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
-import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.MultaRequest;
+import com.bibliotecalivrosemprestimos.validation.CriarEmprestimoRequest;
+
+import java.util.List;
 
 public interface EmprestimoInputPort {
-    Emprestimo criarEmprestimo(Usuario usuario);
-    Emprestimo listarEmprestimos(Long id, Boolean ativo);
-    Emprestimo registrarDevolucao(Long id);
-    Emprestimo calcularMulta(Long id);
+    EmprestimoRequest criarEmprestimo(CriarEmprestimoRequest request);
+    List<EmprestimoRequest> listarEmprestimos(Long usuarioId, Boolean ativo);
+    public EmprestimoRequest registrarDevolucao(Long id);
+    public MultaRequest calcularMulta(Long id);
 }

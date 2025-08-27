@@ -3,53 +3,55 @@ package com.bibliotecalivrosemprestimos.core.service;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.output.entity.EmprestimoEntity;
 import com.bibliotecalivrosemprestimos.adapter.output.entity.UsuarioEntity;
+import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
+import com.bibliotecalivrosemprestimos.port.input.LivroInputPort;
+import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
 import com.bibliotecalivrosemprestimos.validation.AtualizarLivroRequest;
 import com.bibliotecalivrosemprestimos.validation.CriarLivroRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.LivroEntity;
 import com.bibliotecalivrosemprestimos.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.exception.NotFoundException;
-import com.bibliotecalivrosemprestimos.adapter.output.repository.LivroRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class LivroService {
-    private final LivroRepository livroRepository;
+public class LivroService implements LivroInputPort {
+    private final LivroOutputPort livroOutputPort;
 
-    public LivroService(LivroRepository livroRepository) {
-        this.livroRepository = livroRepository;
+    public LivroService(LivroOutputPort livroOutputPort) {
+        this.livroOutputPort = livroOutputPort;
     }
 
      @Transactional
      public LivroRequest criarLivro(CriarLivroRequest request) {
-         if (livroRepository.existsByIsbn(request.isbn())) {
+         if (livroOutputPort.existsByIsbn(request.isbn())) {
              throw new BusinessException("ISBN já cadastrado");
          }
 
-         LivroEntity livro = new LivroEntity(
+         Livro livro = new Livro(
              request.isbn(),
              request.titulo(),
              request.autor(),
              request.estoque()
          );
 
-         livro = livroRepository.save(livro);
+         livro.incrementarEstoque();
+         livro = livroOutputPort.save(livro);
          return LivroRequest.fromEntity(livro);
      }
 
     public List<LivroRequest> listarLivros(String titulo, Boolean ativo) {
-        List<LivroEntity> livros;
+        List<Livro> livros;
         if (titulo != null && ativo != null) {
-            livros = livroRepository.findByTituloContainingAndAtivo(titulo, ativo);
+            livros = livroOutputPort.findByTituloContainingAndAtivo(titulo, ativo);
         } else if (titulo != null) {
-            livros = livroRepository.findByTituloContaining(titulo);
+            livros = livroOutputPort.findByTituloContaining(titulo);
         } else if (ativo != null) {
-            livros = livroRepository.findByAtivo(ativo);
+            livros = livroOutputPort.findByAtivo(ativo);
         } else {
-            livros = livroRepository.findAll();
+            livros = livroOutputPort.findAll();
         }
 
         return livros.stream()
@@ -58,14 +60,14 @@ public class LivroService {
     }
 
     public LivroRequest buscarPorId(Long id) {
-        LivroEntity livro = livroRepository.findById(id)
+        Livro livro = livroOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
         return LivroRequest.fromEntity(livro);
     }
 
      @Transactional
      public LivroRequest atualizarLivro(Long id, AtualizarLivroRequest request) {
-         LivroEntity livro = livroRepository.findById(id)
+         Livro livro = livroOutputPort.findById(id)
                  .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
 
          livro.setTitulo(request.titulo());
@@ -73,32 +75,33 @@ public class LivroService {
          livro.setEstoque(request.estoque());
          livro.setAtivo(request.ativo());
 
-         livro = livroRepository.save(livro);
+         livro = livroOutputPort.save(livro);
          return LivroRequest.fromEntity(livro);
      }
 
     @Transactional
     public void desativarLivro(Long id) {
-        LivroEntity livro = livroRepository.findById(id)
+        Livro livro = livroOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
-        livro.setAtivo(false);
-        livroRepository.save(livro);
+//        livro.setAtivo(false);
+        livro.exclusaoLogica();
+        livroOutputPort.save(livro);
     }
 
-    public List<LivroEntity> listarTodosLivros() {
-        return livroRepository.findAll();
+    public List<Livro> listarTodosLivros() {
+        return livroOutputPort.findAll();
     }
 
 
     public List<LivroComEmprestimoRequest> listarLivrosEmprestados() {
-         return livroRepository.findLivrosEmprestados()
+         return livroOutputPort.findLivrosEmprestados()
                  .stream()
                  .map(this::toLivroComEmprestimoDTO)
                  .collect(Collectors.toList());
     }
 
     private LivroComEmprestimoRequest toLivroComEmprestimoDTO(Object[] result) {
-         LivroEntity livro = (LivroEntity) result[0];
+         Livro livro = (Livro) result[0];
          EmprestimoEntity emprestimo = (EmprestimoEntity) result[1];
          UsuarioEntity usuario = (UsuarioEntity) result[2];
 

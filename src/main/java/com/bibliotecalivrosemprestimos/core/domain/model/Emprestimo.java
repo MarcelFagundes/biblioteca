@@ -68,6 +68,8 @@ public class Emprestimo {
         this.devolvidoEm = devolvidoEm;
     }
 
+    public void setId(Long id) { this.id = id; }
+
     // Métodos utilitários
     public boolean isAtivo() {
         return devolvidoEm == null;

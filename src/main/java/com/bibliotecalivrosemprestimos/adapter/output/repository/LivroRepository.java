@@ -1,37 +1,28 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.LivroEntity;
+import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
+import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
+
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface LivroRepository extends JpaRepository<LivroEntity, Long> {
+public interface LivroRepository extends LivroOutputPort {
+    // Métodos CRUD básicos
+    Livro save(Livro livro);
+    Optional<Livro> findById(Long id);
+    List<Livro> findAll();
+    void deleteById(Long id);
 
-    // Busca por todos livros
-    List<LivroEntity> findAll();
-
-    // Verifica se ISBN já existe (para validação de unicidade)
+    // Métodos específicos do domínio
     boolean existsByIsbn(String isbn);
+    List<Livro> findByTituloContaining(String titulo);
+    List<Livro> findByTituloContainingAndAtivo(String titulo, boolean ativo);
+    List<Livro> findByAtivo(boolean ativo);
+    Optional<Livro> findByIsbn(String isbn);
 
-    // Busca por título (com LIKE)
-    List<LivroEntity> findByTituloContaining(String titulo);
-
-    // Busca por título e status ativo
-    List<LivroEntity> findByTituloContainingAndAtivo(String titulo, boolean ativo);
-
-    // Busca por status ativo
-    List<LivroEntity> findByAtivo(boolean ativo);
-
-    // Busca por ISBN
-    Optional<LivroEntity> findByIsbn(String isbn);
-
-    // Consulta customizada para livros emprestados (com informações do empréstimo e usuário)
-    @Query("SELECT l, e, u FROM LivroEntity l " +
-           "JOIN EmprestimoEntity e ON e.livro = l " +
-           "JOIN UsuarioEntity u ON e.usuario = u " +
-           "WHERE e.devolvidoEm IS NULL")
+    // Consulta customizada para livros emprestados
     List<Object[]> findLivrosEmprestados();
+
+    // Método adicional para atualização
+    int update(Livro livro);
 }

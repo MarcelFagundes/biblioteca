@@ -1,22 +1,25 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
-import com.bibliotecalivrosemprestimos.adapter.output.entity.UsuarioEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
+
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
+public interface UsuarioRepository extends UsuarioOutputPort {
+    // Métodos CRUD básicos
+    Usuario save(Usuario usuario);
+    Optional<Usuario> findById(Long id);
+    List<Usuario> findAll();
+    void deleteById(Long id);
 
+    // Métodos específicos do domínio
     boolean existsByEmail(String email);
+    Optional<Usuario> findByEmail(String email);
 
-    Optional<UsuarioEntity> findByEmail(String email);
-
-    @Query("SELECT u, COUNT(e) as total, " +
-            "SUM(CASE WHEN e.devolvidoEm IS NULL THEN 1 ELSE 0 END) as ativos " +
-            "FROM UsuarioEntity u LEFT JOIN EmprestimoEntity e ON e.usuario = u " +
-            "GROUP BY u")
+    // Método para buscar usuários com estatísticas de empréstimos
     List<Object[]> findUsuariosComEmprestimos();
+
+    // Método adicional para atualização
+    int update(Usuario usuario);
 }

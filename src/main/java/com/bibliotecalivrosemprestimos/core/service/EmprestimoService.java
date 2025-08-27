@@ -1,13 +1,17 @@
 package com.bibliotecalivrosemprestimos.core.service;
 
 import com.bibliotecalivrosemprestimos.adapter.input.request.MultaRequest;
+import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
+import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
+import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+import com.bibliotecalivrosemprestimos.port.input.EmprestimoInputPort;
+import com.bibliotecalivrosemprestimos.port.output.EmprestimoOutputPort;
+import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
+import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
 import com.bibliotecalivrosemprestimos.validation.CriarEmprestimoRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.EmprestimoEntity;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.LivroEntity;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.UsuarioEntity;
 import com.bibliotecalivrosemprestimos.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.exception.NotFoundException;
 import com.bibliotecalivrosemprestimos.adapter.output.repository.EmprestimoRepository;
@@ -18,23 +22,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class EmprestimoService {
-    private final EmprestimoRepository emprestimoRepository;
-    private final LivroRepository livroRepository;
-    private final UsuarioRepository usuarioRepository;
+public class EmprestimoService implements EmprestimoInputPort {
+    private final EmprestimoOutputPort emprestimoOutputPort;
+    private final LivroOutputPort livroOutputPort;
+    private final UsuarioOutputPort usuarioOutputPort;
 
     public EmprestimoService(EmprestimoRepository emprestimoRepository,
                             LivroRepository livroRepository,
                             UsuarioRepository usuarioRepository) {
-        this.emprestimoRepository = emprestimoRepository;
-        this.livroRepository = livroRepository;
-        this.usuarioRepository = usuarioRepository;
+        this.emprestimoOutputPort = emprestimoRepository;
+        this.livroOutputPort = livroRepository;
+        this.usuarioOutputPort = usuarioRepository;
     }
 
      @Transactional
      public EmprestimoRequest criarEmprestimo(CriarEmprestimoRequest request) {
          // Validações
-         LivroEntity livro = livroRepository.findById(request.livroId())
+         Livro livro = livroOutputPort.findById(request.livroId())
                  .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
 
          if (!livro.getAtivo()) {
@@ -45,11 +49,12 @@ public class EmprestimoService {
              throw new BusinessException("Estoque insuficiente para empréstimo");
          }
 
-         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
+         Usuario usuario = usuarioOutputPort.findById(request.usuarioId())
                  .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
          // Verifica se já existe empréstimo em aberto para o mesmo livro e usuário
-         boolean emprestimoDuplicado = emprestimoRepository.existsByLivroAndUsuarioAndDevolvidoEmIsNull(
+//         boolean emprestimoDuplicado = emprestimoRepository.existsByLivroAndUsuarioAndDevolvidoEmIsNull(
+           boolean emprestimoDuplicado = emprestimoOutputPort.existsByLivroAndUsuarioAndDevolvidoEmIsNull(
              livro, usuario);
 
          if (emprestimoDuplicado) {
@@ -64,7 +69,7 @@ public class EmprestimoService {
              devolucaoPrevista = request.devolucaoPrevista();
          }
 
-         EmprestimoEntity emprestimo = new EmprestimoEntity(
+         Emprestimo emprestimo = new Emprestimo(
              livro,
              usuario,
              devolucaoPrevista
@@ -72,31 +77,31 @@ public class EmprestimoService {
 
          // Atualiza estoque
          livro.decrementarEstoque();
-         livroRepository.save(livro);
+         livroOutputPort.save(livro);
 
-         emprestimo = emprestimoRepository.save(emprestimo);
+         emprestimo = emprestimoOutputPort.save(emprestimo);
          return EmprestimoRequest.fromEntity(emprestimo);
      }
 
     public List<EmprestimoRequest> listarEmprestimos(Long usuarioId, Boolean ativo) {
-        List<EmprestimoEntity> emprestimos;
+        List<Emprestimo> emprestimos;
 
         if (usuarioId != null && ativo != null) {
             if (ativo) {
-                emprestimos = emprestimoRepository.findByUsuarioIdAndDevolvidoEmIsNull(usuarioId);
+                emprestimos = emprestimoOutputPort.findByUsuarioIdAndDevolvidoEmIsNull(usuarioId);
             } else {
-                emprestimos = emprestimoRepository.findByUsuarioIdAndDevolvidoEmIsNotNull(usuarioId);
+                emprestimos = emprestimoOutputPort.findByUsuarioIdAndDevolvidoEmIsNotNull(usuarioId);
             }
         } else if (usuarioId != null) {
-            emprestimos = emprestimoRepository.findByUsuarioId(usuarioId);
+            emprestimos = emprestimoOutputPort.findByUsuarioId(usuarioId);
         } else if (ativo != null) {
             if (ativo) {
-                emprestimos = emprestimoRepository.findByDevolvidoEmIsNull();
+                emprestimos = emprestimoOutputPort.findByDevolvidoEmIsNull();
             } else {
-                emprestimos = emprestimoRepository.findByDevolvidoEmIsNotNull();
+                emprestimos = emprestimoOutputPort.findByDevolvidoEmIsNotNull();
             }
         } else {
-            emprestimos = emprestimoRepository.findAll();
+            emprestimos = emprestimoOutputPort.findAll();
         }
 
         return emprestimos.stream()
@@ -106,7 +111,7 @@ public class EmprestimoService {
 
     @Transactional
     public EmprestimoRequest registrarDevolucao(Long id) {
-        EmprestimoEntity emprestimo = emprestimoRepository.findById(id)
+        Emprestimo emprestimo = emprestimoOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empréstimo não encontrado"));
 
         if (emprestimo.getDevolvidoEm() != null) {
@@ -117,16 +122,16 @@ public class EmprestimoService {
         emprestimo.setDevolvidoEm(LocalDateTime.now());
 
         // Atualiza estoque
-        LivroEntity livro = emprestimo.getLivro();
-        livro.incrementarEstoque();
-        livroRepository.save(livro);
+        Livro livro = emprestimo.getLivro();
+//        livro.decrementarEstoque();
+        livroOutputPort.save(livro);
 
-        emprestimo = emprestimoRepository.save(emprestimo);
+        emprestimo = emprestimoOutputPort.save(emprestimo);
         return EmprestimoRequest.fromEntity(emprestimo);
     }
 
      public MultaRequest calcularMulta(Long id) {
-         EmprestimoEntity emprestimo = emprestimoRepository.findById(id)
+         Emprestimo emprestimo = emprestimoOutputPort.findById(id)
                  .orElseThrow(() -> new NotFoundException("Empréstimo não encontrado"));
 
          if (emprestimo.getDevolvidoEm() == null) {

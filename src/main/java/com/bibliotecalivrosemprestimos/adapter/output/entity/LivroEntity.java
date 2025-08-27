@@ -50,6 +50,8 @@ public class LivroEntity {
         return id;
     }
 
+    public void setId(Long id) { this.id = id; }
+
     public String getIsbn() {
         return isbn;
     }
@@ -99,6 +101,12 @@ public class LivroEntity {
 
     public void incrementarEstoque() {
         estoque++;
+    }
+
+    public void exclusaoLogica() {
+        if (ativo = true) {
+            ativo = false;
+        }
     }
 
     @Override

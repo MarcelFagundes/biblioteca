@@ -1,6 +1,6 @@
 package com.bibliotecalivrosemprestimos.adapter.input.request;
 
-import com.bibliotecalivrosemprestimos.adapter.output.entity.LivroEntity;
+import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 
 public record LivroRequest(
     Long id,
@@ -10,7 +10,7 @@ public record LivroRequest(
     Integer estoque,
     Boolean ativo
 ) {
-    public static LivroRequest fromEntity(LivroEntity livro) {
+    public static LivroRequest fromEntity(Livro livro) {
         return new LivroRequest(
             livro.getId(),
             livro.getIsbn(),
