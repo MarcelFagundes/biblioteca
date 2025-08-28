@@ -2,62 +2,62 @@ package com.bibliotecalivrosemprestimos.core.service;
 
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.UsuarioEntity;
+import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.exception.NotFoundException;
-import com.bibliotecalivrosemprestimos.adapter.output.repository.UsuarioRepository;
+import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
+import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
 import com.bibliotecalivrosemprestimos.validation.CriarUsuarioRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 import java.util.List;
 
-@Service
-public class UsuarioService {
+@Component
+public class UsuarioService implements UsuarioInputPort {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioOutputPort usuarioOutputPort;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioService(UsuarioOutputPort usuarioOutputPort) {
+        this.usuarioOutputPort = usuarioOutputPort;
     }
 
-    @Transactional
     public UsuarioRequest criarUsuario(CriarUsuarioRequest request) {
         // Validação de e-mail único
-        if (usuarioRepository.existsByEmail(request.email())) {
+        if (usuarioOutputPort.existsByEmail(request.email())) {
             throw new BusinessException("Já existe um usuário cadastrado com este e-mail");
         }
 
-        UsuarioEntity usuario = new UsuarioEntity(
+        Usuario usuario = new Usuario(
                 request.nome(),
                 request.email()
         );
 
-        usuario = usuarioRepository.save(usuario);
+        usuario = usuarioOutputPort.save(usuario);
         return UsuarioRequest.fromEntity(usuario);
     }
 
     public UsuarioRequest buscarPorId(Long id) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
+        Usuario usuario = usuarioOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
         return UsuarioRequest.fromEntity(usuario);
     }
 
     public List<UsuarioRequest> listarTodos() {
-        return usuarioRepository.findAll()
+        return usuarioOutputPort.findAll()
                 .stream()
                 .map(UsuarioRequest::fromEntity)
                 .toList();
     }
 
     public List<UsuarioComEmprestimosRequest> listarUsuariosComEmprestimos() {
-        return usuarioRepository.findUsuariosComEmprestimos()
+        return usuarioOutputPort.findUsuariosComEmprestimos()
                 .stream()
                 .map(this::toUsuarioComEmprestimosDTO)
                 .toList();
     }
 
+
     private UsuarioComEmprestimosRequest toUsuarioComEmprestimosDTO(Object[] result) {
-        UsuarioEntity usuario = (UsuarioEntity) result[0];
+        Usuario usuario = (Usuario) result[0];
         Long totalEmprestimos = (Long) result[1];
         Long emprestimosAtivos = (Long) result[2];
 

@@ -1,13 +1,26 @@
 package com.bibliotecalivrosemprestimos.port.output;
 
-import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
+import java.util.List;
+import java.util.Optional;
 
 public interface LivroOutputPort {
-    Livro criarLivro(Livro livro);
-    Livro listarLivros(String titulo, Boolean ativo);
-    Livro buscarLivroPorId(Long id);
-    Livro atualizarLivro(Long id, LivroRequest livroRequest);
-    Livro desativarLivro(Long id);
-    Livro listarLivrosEmprestados();
+    // Métodos CRUD básicos
+    Livro save(Livro livro);
+    Optional<Livro> findById(Long id);
+    List<Livro> findAll();
+    void deleteById(Long id);
+
+    // Métodos específicos do domínio
+    boolean existsByIsbn(String isbn);
+    List<Livro> findByTituloContaining(String titulo);
+    List<Livro> findByTituloContainingAndAtivo(String titulo, boolean ativo);
+    List<Livro> findByAtivo(boolean ativo);
+    Optional<Livro> findByIsbn(String isbn);
+
+    // Consulta customizada para livros emprestados
+    List<Object[]> findLivrosEmprestados();
+
+    // Método adicional para atualização
+    int update(Livro livro);
 }

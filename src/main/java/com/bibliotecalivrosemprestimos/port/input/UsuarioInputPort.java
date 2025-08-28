@@ -1,9 +1,15 @@
 package com.bibliotecalivrosemprestimos.port.input;
 
-import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
+import com.bibliotecalivrosemprestimos.validation.CriarUsuarioRequest;
+import org.springframework.stereotype.Repository;
+import java.util.List;
 
+@Repository
 public interface UsuarioInputPort {
-    Usuario criarUsuario(Usuario usuario);
-    Usuario buscarUsuarioPorId(Long id);
-    Usuario listarUsuariosComEmprestimos();
+    UsuarioRequest criarUsuario(CriarUsuarioRequest request);
+    UsuarioRequest buscarPorId(Long id);
+    List<UsuarioRequest> listarTodos();
+    List<UsuarioComEmprestimosRequest> listarUsuariosComEmprestimos();
 }

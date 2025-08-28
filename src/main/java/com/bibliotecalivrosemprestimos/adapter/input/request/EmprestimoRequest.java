@@ -1,7 +1,7 @@
 package com.bibliotecalivrosemprestimos.adapter.input.request;
 
 import java.time.LocalDateTime;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.EmprestimoEntity;
+import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 
 public record EmprestimoRequest(
     Long id,
@@ -15,7 +15,7 @@ public record EmprestimoRequest(
     boolean ativo,
     boolean atrasado
 ) {
-    public static EmprestimoRequest fromEntity(EmprestimoEntity emprestimo) {
+    public static EmprestimoRequest fromEntity(Emprestimo emprestimo) {
         return new EmprestimoRequest(
             emprestimo.getId(),
             emprestimo.getLivro().getId(),

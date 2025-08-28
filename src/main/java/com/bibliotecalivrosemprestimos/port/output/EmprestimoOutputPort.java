@@ -1,11 +1,38 @@
 package com.bibliotecalivrosemprestimos.port.output;
 
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
+import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 public interface EmprestimoOutputPort {
-    Emprestimo criarEmprestimo(Usuario usuario);
-    Emprestimo listarEmprestimos(Long id, Boolean ativo);
-    Emprestimo registrarDevolucao(Long id);
-    Emprestimo calcularMulta(Long id);
+    // Métodos CRUD básicos
+    Emprestimo save(Emprestimo emprestimo);
+
+    // Busca empréstimos por ID
+    Optional<Emprestimo> findById(Long id);
+
+    // Busca todos os empréstimos
+    List<Emprestimo> findAll();
+
+    //Deleta por ID
+    void deleteById(Long id);
+
+    // Busca empresa por id do usuário
+    List<Emprestimo> findByUsuarioId(Long usuarioId);
+    List<Emprestimo> findByUsuarioIdAndDevolvidoEmIsNull(Long usuarioId);
+    List<Emprestimo> findByUsuarioIdAndDevolvidoEmIsNotNull(Long usuarioId);
+    List<Emprestimo> findByDevolvidoEmIsNull();
+    List<Emprestimo> findByDevolvidoEmIsNotNull();
+
+
+    // Verifica se usuário já tem empréstimo ativo para um livro específico
+    boolean existsByLivroAndUsuarioAndDevolvidoEmIsNull(Livro livro, Usuario usuario);
+    List<Emprestimo> findByDevolvidoEmIsNullAndDevolucaoPrevistaBefore(LocalDateTime data);
+    List<Emprestimo> findEmprestimosAtrasados();
+
+    // Método adicional para atualização
+    int update(Emprestimo emprestimo);
 }

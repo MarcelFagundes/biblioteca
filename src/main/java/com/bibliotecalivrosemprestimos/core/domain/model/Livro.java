@@ -69,6 +69,8 @@ public class Livro {
         this.ativo = ativo;
     }
 
+    public void setId(Long id) { this.id = id; }
+
     // Métodos utilitários
     public void decrementarEstoque() {
         if (estoque > 0) {
@@ -78,6 +80,12 @@ public class Livro {
 
     public void incrementarEstoque() {
         estoque++;
+    }
+
+    public void exclusaoLogica() {
+        if (ativo = true) {
+            ativo = false;
+        }
     }
 
     @Override
