@@ -5,24 +5,21 @@ import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.exception.NotFoundException;
-import com.bibliotecalivrosemprestimos.adapter.output.repository.UsuarioRepository;
 import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
 import com.bibliotecalivrosemprestimos.validation.CriarUsuarioRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 import java.util.List;
 
-@Service
+@Component
 public class UsuarioService implements UsuarioInputPort {
 
     private final UsuarioOutputPort usuarioOutputPort;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
-        this.usuarioOutputPort = usuarioRepository;
+    public UsuarioService(UsuarioOutputPort usuarioOutputPort) {
+        this.usuarioOutputPort = usuarioOutputPort;
     }
 
-    @Transactional
     public UsuarioRequest criarUsuario(CriarUsuarioRequest request) {
         // Validação de e-mail único
         if (usuarioOutputPort.existsByEmail(request.email())) {
@@ -38,14 +35,12 @@ public class UsuarioService implements UsuarioInputPort {
         return UsuarioRequest.fromEntity(usuario);
     }
 
-    @Override
     public UsuarioRequest buscarPorId(Long id) {
         Usuario usuario = usuarioOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
         return UsuarioRequest.fromEntity(usuario);
     }
 
-    @Override
     public List<UsuarioRequest> listarTodos() {
         return usuarioOutputPort.findAll()
                 .stream()
@@ -53,7 +48,6 @@ public class UsuarioService implements UsuarioInputPort {
                 .toList();
     }
 
-    @Override
     public List<UsuarioComEmprestimosRequest> listarUsuariosComEmprestimos() {
         return usuarioOutputPort.findUsuariosComEmprestimos()
                 .stream()

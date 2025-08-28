@@ -1,26 +1,23 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository.impl;
 
-import com.bibliotecalivrosemprestimos.adapter.output.repository.LivroRepository;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
+import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
-
+import org.springframework.stereotype.Component;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class LivroRepositoryImpl implements LivroRepository {
+@Component
+public class LivroRepositoryImpl implements LivroOutputPort {
 
-    private final JdbcTemplate jdbcTemplate;
-
-    public LivroRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     // RowMapper para converter ResultSet em LivroEntity
     private final RowMapper<Livro> livroRowMapper = (rs, rowNum) -> {

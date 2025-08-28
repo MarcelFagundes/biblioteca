@@ -1,7 +1,6 @@
 package com.bibliotecalivrosemprestimos.port.output;
 
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
-
 import java.util.List;
 import java.util.Optional;
 

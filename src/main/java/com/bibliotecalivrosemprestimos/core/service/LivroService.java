@@ -8,23 +8,22 @@ import com.bibliotecalivrosemprestimos.port.input.LivroInputPort;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
 import com.bibliotecalivrosemprestimos.validation.AtualizarLivroRequest;
 import com.bibliotecalivrosemprestimos.validation.CriarLivroRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
 import com.bibliotecalivrosemprestimos.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.exception.NotFoundException;
+import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class LivroService implements LivroInputPort {
+
     private final LivroOutputPort livroOutputPort;
 
     public LivroService(LivroOutputPort livroOutputPort) {
         this.livroOutputPort = livroOutputPort;
     }
 
-     @Transactional
      public LivroRequest criarLivro(CriarLivroRequest request) {
          if (livroOutputPort.existsByIsbn(request.isbn())) {
              throw new BusinessException("ISBN já cadastrado");
@@ -65,7 +64,6 @@ public class LivroService implements LivroInputPort {
         return LivroRequest.fromEntity(livro);
     }
 
-     @Transactional
      public LivroRequest atualizarLivro(Long id, AtualizarLivroRequest request) {
          Livro livro = livroOutputPort.findById(id)
                  .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
@@ -79,7 +77,6 @@ public class LivroService implements LivroInputPort {
          return LivroRequest.fromEntity(livro);
      }
 
-    @Transactional
     public void desativarLivro(Long id) {
         Livro livro = livroOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Livro não encontrado"));

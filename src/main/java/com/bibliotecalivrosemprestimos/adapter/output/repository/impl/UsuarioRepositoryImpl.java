@@ -1,26 +1,24 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository.impl;
 
-import com.bibliotecalivrosemprestimos.adapter.output.repository.UsuarioRepository;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Repository
-public class UsuarioRepositoryImpl implements UsuarioRepository {
+@Component
+public class UsuarioRepositoryImpl implements UsuarioOutputPort {
 
-    private final JdbcTemplate jdbcTemplate;
-
-    public UsuarioRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     // RowMapper para converter ResultSet em UsuarioEntity
     private final RowMapper<Usuario> usuarioRowMapper = (rs, rowNum) -> {

@@ -3,7 +3,6 @@ package com.bibliotecalivrosemprestimos.port.output;
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

@@ -1,14 +1,15 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository.impl;
 
-import com.bibliotecalivrosemprestimos.adapter.output.repository.EmprestimoRepository;
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+import com.bibliotecalivrosemprestimos.port.output.EmprestimoOutputPort;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -17,14 +18,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Repository
-public class EmprestimoRepositoryImpl implements EmprestimoRepository {
+@Component
+public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
 
-    private final JdbcTemplate jdbcTemplate;
-
-    public EmprestimoRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     // RowMapper para converter ResultSet em EmprestimoEntity
     private final RowMapper<Emprestimo> emprestimoRowMapper = (rs, rowNum) -> {

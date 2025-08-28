@@ -9,33 +9,30 @@ import com.bibliotecalivrosemprestimos.port.output.EmprestimoOutputPort;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
 import com.bibliotecalivrosemprestimos.validation.CriarEmprestimoRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
 import com.bibliotecalivrosemprestimos.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.exception.NotFoundException;
-import com.bibliotecalivrosemprestimos.adapter.output.repository.EmprestimoRepository;
-import com.bibliotecalivrosemprestimos.adapter.output.repository.LivroRepository;
-import com.bibliotecalivrosemprestimos.adapter.output.repository.UsuarioRepository;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class EmprestimoService implements EmprestimoInputPort {
+
     private final EmprestimoOutputPort emprestimoOutputPort;
     private final LivroOutputPort livroOutputPort;
     private final UsuarioOutputPort usuarioOutputPort;
 
-    public EmprestimoService(EmprestimoRepository emprestimoRepository,
-                            LivroRepository livroRepository,
-                            UsuarioRepository usuarioRepository) {
-        this.emprestimoOutputPort = emprestimoRepository;
-        this.livroOutputPort = livroRepository;
-        this.usuarioOutputPort = usuarioRepository;
+    public EmprestimoService(EmprestimoOutputPort emprestimoOutputPort,
+                            LivroOutputPort livroOutputPort,
+                            UsuarioOutputPort usuarioOutputPort) {
+        this.emprestimoOutputPort = emprestimoOutputPort;
+        this.livroOutputPort = livroOutputPort;
+        this.usuarioOutputPort = usuarioOutputPort;
     }
 
-     @Transactional
      public EmprestimoRequest criarEmprestimo(CriarEmprestimoRequest request) {
          // Validações
          Livro livro = livroOutputPort.findById(request.livroId())
@@ -109,7 +106,6 @@ public class EmprestimoService implements EmprestimoInputPort {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public EmprestimoRequest registrarDevolucao(Long id) {
         Emprestimo emprestimo = emprestimoOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empréstimo não encontrado"));
