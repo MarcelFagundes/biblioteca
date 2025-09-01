@@ -13,4 +13,5 @@ public interface UsuarioMapper {
 
     Usuario toEntity(UsuarioRequest usuarioRequest);
     UsuarioRequest toRequest(UsuarioEntity usuarioEntity);
+    UsuarioRequest fromEntity(Usuario usuario);
 }

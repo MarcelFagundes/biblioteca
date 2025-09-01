@@ -12,4 +12,5 @@ public interface EmprestimoMapper {
 
     Emprestimo toEntity(EmprestimoRequest emprestimoRequest);
     EmprestimoRequest toRequest(EmprestimoEntity emprestimoEntity);
+    EmprestimoRequest fromEntity(Emprestimo emprestimo);
 }

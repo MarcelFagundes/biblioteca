@@ -5,8 +5,8 @@ import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.MultaRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.port.input.EmprestimoInputPort;
-import com.bibliotecalivrosemprestimos.validation.CriarEmprestimoRequest;
-import com.bibliotecalivrosemprestimos.validation.DevolverLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarEmprestimoRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.DevolverLivroRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,6 @@ public class EmprestimoController {
 
     private EmprestimoRequest emprestimoRequest;
 
-    Emprestimo entity = EmprestimoMapper.INSTANCE.toEntity(emprestimoRequest);
 
     // CREATE
     @PostMapping

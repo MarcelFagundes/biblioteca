@@ -5,8 +5,8 @@ import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.port.input.LivroInputPort;
-import com.bibliotecalivrosemprestimos.validation.AtualizarLivroRequest;
-import com.bibliotecalivrosemprestimos.validation.CriarLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.AtualizarLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarLivroRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +22,6 @@ public class LivroController {
 
     private LivroRequest livroRequest;
 
-    Livro entity = LivroMapper.INSTANCE.toEntity(livroRequest);
 
     // CREATE
     @PostMapping

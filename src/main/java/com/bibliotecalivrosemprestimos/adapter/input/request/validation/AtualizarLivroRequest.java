@@ -1,4 +1,4 @@
-package com.bibliotecalivrosemprestimos.validation;
+package com.bibliotecalivrosemprestimos.adapter.input.request.validation;
 
 public record AtualizarLivroRequest(
         String titulo,

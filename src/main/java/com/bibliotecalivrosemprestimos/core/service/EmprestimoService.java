@@ -1,5 +1,6 @@
 package com.bibliotecalivrosemprestimos.core.service;
 
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.EmprestimoMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.MultaRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
@@ -8,10 +9,10 @@ import com.bibliotecalivrosemprestimos.port.input.EmprestimoInputPort;
 import com.bibliotecalivrosemprestimos.port.output.EmprestimoOutputPort;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
-import com.bibliotecalivrosemprestimos.validation.CriarEmprestimoRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
-import com.bibliotecalivrosemprestimos.exception.BusinessException;
-import com.bibliotecalivrosemprestimos.exception.NotFoundException;
+import com.bibliotecalivrosemprestimos.adapter.input.exception.BusinessException;
+import com.bibliotecalivrosemprestimos.adapter.input.exception.NotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -50,7 +51,6 @@ public class EmprestimoService implements EmprestimoInputPort {
                  .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
          // Verifica se já existe empréstimo em aberto para o mesmo livro e usuário
-//         boolean emprestimoDuplicado = emprestimoRepository.existsByLivroAndUsuarioAndDevolvidoEmIsNull(
            boolean emprestimoDuplicado = emprestimoOutputPort.existsByLivroAndUsuarioAndDevolvidoEmIsNull(
              livro, usuario);
 
@@ -77,7 +77,7 @@ public class EmprestimoService implements EmprestimoInputPort {
          livroOutputPort.save(livro);
 
          emprestimo = emprestimoOutputPort.save(emprestimo);
-         return EmprestimoRequest.fromEntity(emprestimo);
+         return EmprestimoMapper.INSTANCE.fromEntity(emprestimo);
      }
 
     public List<EmprestimoRequest> listarEmprestimos(Long usuarioId, Boolean ativo) {
@@ -102,7 +102,7 @@ public class EmprestimoService implements EmprestimoInputPort {
         }
 
         return emprestimos.stream()
-                .map(EmprestimoRequest::fromEntity)
+                .map(EmprestimoMapper.INSTANCE::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -119,11 +119,11 @@ public class EmprestimoService implements EmprestimoInputPort {
 
         // Atualiza estoque
         Livro livro = emprestimo.getLivro();
-//        livro.decrementarEstoque();
+        livro.decrementarEstoque();
         livroOutputPort.save(livro);
 
         emprestimo = emprestimoOutputPort.save(emprestimo);
-        return EmprestimoRequest.fromEntity(emprestimo);
+        return EmprestimoMapper.INSTANCE.fromEntity(emprestimo);
     }
 
      public MultaRequest calcularMulta(Long id) {

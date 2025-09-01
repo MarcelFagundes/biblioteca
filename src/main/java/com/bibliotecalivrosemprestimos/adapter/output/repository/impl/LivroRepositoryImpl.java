@@ -7,13 +7,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-@Component
+@Repository
 public class LivroRepositoryImpl implements LivroOutputPort {
 
     @Autowired
@@ -26,9 +28,6 @@ public class LivroRepositoryImpl implements LivroOutputPort {
         livro.setTitulo(rs.getString("titulo"));
         livro.setAutor(rs.getString("autor"));
         livro.setIsbn(rs.getString("isbn"));
-
-//        livro.setQuantidadeTotal(rs.getInt("quantidade_total"));
-//        livro.setQuantidadeDisponivel(rs.getInt("quantidade_disponivel"));
         livro.setEstoque(rs.getInt("estoque"));
         livro.setAtivo(rs.getBoolean("ativo"));
 
@@ -39,13 +38,10 @@ public class LivroRepositoryImpl implements LivroOutputPort {
     @Override
     public Livro save(Livro livro) {
         if (livro.getId() == null) {
-            // INSERT
-//            String sql = "INSERT INTO livros (titulo, autor, isbn, ano_publicacao, editora, " +
-//                    "quantidade_total, quantidade_disponivel, ativo, data_cadastro) " +
-//                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
             String sql = "INSERT INTO livro (titulo, autor, isbn, " +
                     "estoque, ativo) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?) RETURNING id";
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -54,19 +50,14 @@ public class LivroRepositoryImpl implements LivroOutputPort {
                 ps.setString(1, livro.getTitulo());
                 ps.setString(2, livro.getAutor());
                 ps.setString(3, livro.getIsbn());
-
-
-//                ps.setInt(6, livro.getQuantidadeTotal());
-//                ps.setInt(7, livro.getQuantidadeDisponivel());
                 ps.setInt(4, livro.getEstoque());
                 ps.setBoolean(5, livro.getAtivo());
                 return ps;
             }, keyHolder);
 
-            livro.setId(keyHolder.getKey().longValue());
+            livro.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
             return livro;
         } else {
-            // UPDATE
             update(livro);
             return livro;
         }
@@ -74,9 +65,6 @@ public class LivroRepositoryImpl implements LivroOutputPort {
 
     @Override
     public int update(Livro livro) {
-//        String sql = "UPDATE livro SET titulo = ?, autor = ?, isbn = ?, ano_publicacao = ?, " +
-//                "editora = ?, quantidade_total = ?, quantidade_disponivel = ?, ativo = ?, " +
-//                "data_cadastro = ? WHERE id = ?";
 
           String sql = "UPDATE livro SET titulo = ?, autor = ?, isbn = ?, " +
                  "estoque = ?, ativo = ? WHERE id = ?";
@@ -85,8 +73,6 @@ public class LivroRepositoryImpl implements LivroOutputPort {
                 livro.getTitulo(),
                 livro.getAutor(),
                 livro.getIsbn(),
-//                livro.getQuantidadeTotal(),
-//                livro.getQuantidadeDisponivel(),
                 livro.getEstoque(),
                 livro.getAtivo(),
                 livro.getId());
@@ -105,7 +91,7 @@ public class LivroRepositoryImpl implements LivroOutputPort {
 
     @Override
     public List<Livro> findAll() {
-        String sql = "SELECT * FROM livro";
+        String sql = "SELECT * FROM livro ORDER BY id ASC";
         return jdbcTemplate.query(sql, livroRowMapper);
     }
 
@@ -153,13 +139,7 @@ public class LivroRepositoryImpl implements LivroOutputPort {
 
     @Override
     public List<Object[]> findLivrosEmprestados() {
-//        String sql = "SELECT l.*, e.id as emprestimo_id, e.data_emprestimo, e.devolucao_prevista, " +
-//                "u.id as usuario_id, u.nome as usuario_nome, u.email as usuario_email " +
-//                "FROM livro l " +
-//                "JOIN emprestimos e ON e.livro_id = l.id " +
-//                "JOIN usuarios u ON e.usuario_id = u.id " +
-//                "WHERE e.devolvido_em IS NULL " +
-//                "ORDER BY l.titulo";
+
          String sql = "SELECT l.*, e.id as emprestimo_id, e.retirado_em, e.devolucao_prevista, " +
                  "u.id as usuario_id, u.nome as usuario_nome, u.email as usuario_email " +
                  "FROM livro l " +

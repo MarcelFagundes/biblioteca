@@ -2,37 +2,15 @@ package com.bibliotecalivrosemprestimos.adapter.output.entity;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "emprestimo")
+
 public class EmprestimoEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "livro_id", nullable = false)
     private LivroEntity livro;
-
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioEntity usuario;
-
-    @Column(name = "retirado_em", nullable = false)
     private LocalDateTime retiradoEm;
-
-    @Column(name = "devolucao_prevista", nullable = false)
     private LocalDateTime devolucaoPrevista;
-
-    @Column(name = "devolvido_em")
     private LocalDateTime devolvidoEm;
 
     // Construtores

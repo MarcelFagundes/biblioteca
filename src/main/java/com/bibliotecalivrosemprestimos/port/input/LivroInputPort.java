@@ -3,12 +3,10 @@ package com.bibliotecalivrosemprestimos.port.input;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
-import com.bibliotecalivrosemprestimos.validation.AtualizarLivroRequest;
-import com.bibliotecalivrosemprestimos.validation.CriarLivroRequest;
-import org.springframework.stereotype.Repository;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.AtualizarLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarLivroRequest;
 import java.util.List;
 
-@Repository
 public interface LivroInputPort {
     LivroRequest criarLivro(CriarLivroRequest request);
     List<LivroRequest> listarLivros(String titulo, Boolean ativo);

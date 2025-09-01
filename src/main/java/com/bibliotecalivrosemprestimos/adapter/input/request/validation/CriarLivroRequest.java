@@ -1,4 +1,4 @@
-package com.bibliotecalivrosemprestimos.validation;
+package com.bibliotecalivrosemprestimos.adapter.input.request.validation;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

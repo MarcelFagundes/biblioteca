@@ -1,13 +1,15 @@
 package com.bibliotecalivrosemprestimos.core.service;
 
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioEmprestimosMapper;
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
-import com.bibliotecalivrosemprestimos.exception.BusinessException;
-import com.bibliotecalivrosemprestimos.exception.NotFoundException;
+import com.bibliotecalivrosemprestimos.adapter.input.exception.BusinessException;
+import com.bibliotecalivrosemprestimos.adapter.input.exception.NotFoundException;
 import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
-import com.bibliotecalivrosemprestimos.validation.CriarUsuarioRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
@@ -31,42 +33,51 @@ public class UsuarioService implements UsuarioInputPort {
                 request.email()
         );
 
+//        UsuarioRequest usuarioRequest = UsuarioMapper.INSTANCE.fromEntity(usuario);
+
         usuario = usuarioOutputPort.save(usuario);
-        return UsuarioRequest.fromEntity(usuario);
+
+        return UsuarioMapper.INSTANCE.fromEntity(usuario);
     }
 
     public UsuarioRequest buscarPorId(Long id) {
         Usuario usuario = usuarioOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
-        return UsuarioRequest.fromEntity(usuario);
+
+        return UsuarioMapper.INSTANCE.fromEntity(usuario);
     }
+
 
     public List<UsuarioRequest> listarTodos() {
         return usuarioOutputPort.findAll()
                 .stream()
-                .map(UsuarioRequest::fromEntity)
+                .map(UsuarioMapper.INSTANCE::fromEntity)
                 .toList();
     }
 
     public List<UsuarioComEmprestimosRequest> listarUsuariosComEmprestimos() {
-        return usuarioOutputPort.findUsuariosComEmprestimos()
+
+         return usuarioOutputPort.findUsuariosComEmprestimos()
                 .stream()
-                .map(this::toUsuarioComEmprestimosDTO)
+                .map(UsuarioEmprestimosMapper.INSTANCE::objectArrayToDto)
                 .toList();
     }
 
 
-    private UsuarioComEmprestimosRequest toUsuarioComEmprestimosDTO(Object[] result) {
-        Usuario usuario = (Usuario) result[0];
-        Long totalEmprestimos = (Long) result[1];
-        Long emprestimosAtivos = (Long) result[2];
-
-        return new UsuarioComEmprestimosRequest(
-                usuario.getId(),
-                usuario.getNome(),
-                usuario.getEmail(),
-                emprestimosAtivos,
-                totalEmprestimos
-        );
-    }
+//    private UsuarioComEmprestimosRequest toUsuarioComEmprestimosDTO(UsuarioRequest usuarioRequest, UsuarioComEmprestimosRequest usuarioComEmprestimosRequest) {
+////        Usuario usuario = (Usuario) result[0];
+////        Emprestimo totalEmprestimos = (Emprestimo) result[1];
+////        Emprestimo emprestimosAtivos = (Emprestimo) result[2];
+//
+////        UsuarioRequest usuarioRequest = UsuarioMapper.INSTANCE.fromEntity(usuario);
+////        EmprestimoMapper emprestimoMapper = UsuarioMapper.INSTANCE.fromEntity(emprestimo);
+//
+//        return new UsuarioComEmprestimosRequest(
+//                usuarioRequest.id(),
+//                usuarioRequest.nome(),
+//                usuarioRequest.email(),
+//                usuarioComEmprestimosRequest.emprestimosAtivos(),
+//                usuarioComEmprestimosRequest.emprestimosAtivos()
+//        );
+//    }
 }

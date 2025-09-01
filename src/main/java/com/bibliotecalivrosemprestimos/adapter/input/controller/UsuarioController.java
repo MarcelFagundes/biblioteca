@@ -1,10 +1,8 @@
 package com.bibliotecalivrosemprestimos.adapter.input.controller;
 
-import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
-import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
-import com.bibliotecalivrosemprestimos.validation.CriarUsuarioRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +19,11 @@ public class UsuarioController {
 
     private UsuarioRequest usuarioRequest;
 
-    Usuario usuario = UsuarioMapper.INSTANCE.toEntity(usuarioRequest);
-
     // CREATE
     @PostMapping
     public ResponseEntity<UsuarioRequest> criarUsuario(@Valid @RequestBody CriarUsuarioRequest request) {
-        UsuarioRequest usuario = usuarioInputPort.criarUsuario(request);
-        return ResponseEntity.status(201).body(usuario);
+        UsuarioRequest usuarioCriado = usuarioInputPort.criarUsuario(request);
+        return ResponseEntity.status(201).body(usuarioCriado);
     }
 
     // READ

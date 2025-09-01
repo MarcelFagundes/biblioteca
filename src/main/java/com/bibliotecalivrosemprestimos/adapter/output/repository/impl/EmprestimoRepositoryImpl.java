@@ -32,11 +32,13 @@ public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
         // Configurar livro
         Livro livro = new Livro();
         livro.setId(rs.getLong("livro_id"));
+        livro.setTitulo(rs.getString("titulo"));
         emprestimo.setLivro(livro);
 
         // Configurar usuário
         Usuario usuario = new Usuario();
         usuario.setId(rs.getLong("usuario_id"));
+        usuario.setNome(rs.getString("nome"));
         emprestimo.setUsuario(usuario);
 
         emprestimo.setRetiradoEm(rs.getObject("retirado_em", LocalDateTime.class));
@@ -53,7 +55,7 @@ public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
         if (emprestimo.getId() == null) {
             // INSERT
             String sql = "INSERT INTO emprestimo (livro_id, usuario_id, retirado_em, devolucao_prevista, devolvido_em) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?) RETURNING id ";
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -68,7 +70,6 @@ public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
                 return ps;
             }, keyHolder);
 
-//            emprestimo.setId(keyHolder.getKey().longValue());
             emprestimo.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
             return emprestimo;
         } else {
@@ -81,7 +82,7 @@ public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
     @Override
     public int update(Emprestimo emprestimo) {
         String sql = "UPDATE emprestimo SET livro_id = ?, usuario_id = ?, retirado_em = ?, " +
-                "devolucao_prevista = ?, devolvido_em = ? WHERE usuario_id = ?";
+                "devolucao_prevista = ?, devolvido_em = ? WHERE usuario_id = ? ";
 
         return jdbcTemplate.update(sql,
                 emprestimo.getLivro().getId(),
@@ -94,7 +95,7 @@ public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
 
     @Override
     public Optional<Emprestimo> findById(Long id) {
-        String sql = "SELECT * FROM emprestimo WHERE emprestimo_id = ?";
+        String sql = "SELECT * FROM emprestimo WHERE id = ? RETURNING id";
         try {
             Emprestimo emprestimo = jdbcTemplate.queryForObject(sql, emprestimoRowMapper, id);
             return Optional.ofNullable(emprestimo);
@@ -105,7 +106,6 @@ public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
 
     @Override
     public List<Emprestimo> findAll() {
-//        String sql = "SELECT * FROM emprestimo";
         String sql = "SELECT e.*, l.titulo, u.nome " +
                 "FROM emprestimo e " +
                 "LEFT JOIN livro l ON e.livro_id = l.id " +
@@ -121,12 +121,11 @@ public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
 
     @Override
     public List<Emprestimo> findByUsuarioId(Long usuario_id) {
-//        String sql = "SELECT * FROM emprestimo WHERE usuario_id = ?";
         String sql = "SELECT e.*, l.titulo, u.nome " +
                 "FROM emprestimo e " +
                 "LEFT JOIN livro l ON e.livro_id = l.id " +
                 "LEFT JOIN usuario u ON e.usuario_id = u.id " +
-                "WHERE e.usuario_id = ?";
+                "WHERE e.usuario_id = ?" ;
         return jdbcTemplate.query(sql, emprestimoRowMapper, usuario_id);
     }
 
@@ -144,7 +143,6 @@ public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
 
     @Override
     public List<Emprestimo> findByDevolvidoEmIsNull() {
-//        String sql = "SELECT * FROM emprestimo WHERE devolvido_em IS NULL";
         String sql = "SELECT e.*, l.titulo, u.nome " +
                 "FROM emprestimo e " +
                 "LEFT JOIN livro l ON e.livro_id = l.id " +

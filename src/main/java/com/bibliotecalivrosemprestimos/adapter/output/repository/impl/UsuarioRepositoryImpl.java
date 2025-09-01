@@ -24,8 +24,8 @@ public class UsuarioRepositoryImpl implements UsuarioOutputPort {
     private final RowMapper<Usuario> usuarioRowMapper = (rs, rowNum) -> {
         Usuario usuario = new Usuario();
         usuario.setId(rs.getLong("id"));
-        usuario.setNome(rs.getString("nome"));
-        usuario.setEmail(rs.getString("email"));
+//        usuario.setNome(rs.getString("usuario"));
+//        usuario.setEmail(rs.getString("email"));
 
         return usuario;
     };
@@ -35,7 +35,7 @@ public class UsuarioRepositoryImpl implements UsuarioOutputPort {
         if (usuario.getId() == null) {
             // INSERT
             String sql = "INSERT INTO usuario (nome, email) " +
-                    "VALUES (?, ?)";
+                    "VALUES (?, ?) RETURNING id" ;
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -46,7 +46,6 @@ public class UsuarioRepositoryImpl implements UsuarioOutputPort {
                 return ps;
             }, keyHolder);
 
-            //usuario.setId(keyHolder.getKey().longValue());
             usuario.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
             return usuario;
         } else {
@@ -109,7 +108,7 @@ public class UsuarioRepositoryImpl implements UsuarioOutputPort {
 
     @Override
     public List<Object[]> findUsuariosComEmprestimos() {
-        String sql = "SELECT u.*, " +
+        String sql = "SELECT u.id, u.nome as nome, u.email as email, " +
                 "COUNT(e.id) as total_emprestimos, " +
                 "SUM(CASE WHEN e.devolvido_em IS NULL THEN 1 ELSE 0 END) as emprestimos_ativos " +
                 "FROM usuario u " +
@@ -118,11 +117,12 @@ public class UsuarioRepositoryImpl implements UsuarioOutputPort {
                 "ORDER BY u.nome";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            Object[] result = new Object[3];
+            Object[] result = new Object[10];
 
-            // Mapear UsuarioEntity
+//            // Mapear UsuarioEntity
             Usuario usuario = usuarioRowMapper.mapRow(rs, rowNum);
-            result[0] = usuario;
+//            result[0] = rs.getLong("id");
+//           result[0] = rs.getString("nome");
 
             // Total de empréstimos
             result[1] = rs.getLong("total_emprestimos");
