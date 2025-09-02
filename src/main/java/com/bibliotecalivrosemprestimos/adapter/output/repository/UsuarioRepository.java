@@ -1,4 +1,4 @@
-package com.bibliotecalivrosemprestimos.adapter.output.repository.impl;
+package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
@@ -7,15 +7,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Component
-public class UsuarioRepositoryImpl implements UsuarioOutputPort {
+@Repository
+public class UsuarioRepository implements UsuarioOutputPort {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -129,6 +129,7 @@ public class UsuarioRepositoryImpl implements UsuarioOutputPort {
 
             // Empréstimos ativos
             result[2] = rs.getLong("emprestimos_ativos");
+
 
             return result;
         });

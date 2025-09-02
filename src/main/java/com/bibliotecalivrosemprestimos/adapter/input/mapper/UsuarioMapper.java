@@ -1,6 +1,8 @@
 package com.bibliotecalivrosemprestimos.adapter.input.mapper;
 
+import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import com.bibliotecalivrosemprestimos.adapter.output.entity.UsuarioEntity;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import org.mapstruct.Mapper;
@@ -14,4 +16,5 @@ public interface UsuarioMapper {
     Usuario toEntity(UsuarioRequest usuarioRequest);
     UsuarioRequest toRequest(UsuarioEntity usuarioEntity);
     UsuarioRequest fromEntity(Usuario usuario);
+    CriarUsuarioRequest toRequest(CriarUsuarioRequest request);
 }

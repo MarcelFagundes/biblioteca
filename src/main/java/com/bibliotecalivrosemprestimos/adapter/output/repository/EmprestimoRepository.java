@@ -1,4 +1,4 @@
-package com.bibliotecalivrosemprestimos.adapter.output.repository.impl;
+package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Component
-public class EmprestimoRepositoryImpl implements EmprestimoOutputPort {
+@Repository
+public class EmprestimoRepository implements EmprestimoOutputPort {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

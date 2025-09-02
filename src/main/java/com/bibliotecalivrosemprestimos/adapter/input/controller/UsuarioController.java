@@ -1,6 +1,8 @@
 package com.bibliotecalivrosemprestimos.adapter.input.controller;
 
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
+import com.bibliotecalivrosemprestimos.port.input.EmprestimoInputPort;
 import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
@@ -17,13 +19,19 @@ public class UsuarioController {
     @Autowired
     private UsuarioInputPort usuarioInputPort;
 
-    private UsuarioRequest usuarioRequest;
+    @Autowired
+    private UsuarioMapper usuarioMapper;
+
+    public UsuarioController(UsuarioInputPort usuarioInputPort) {
+        this.usuarioInputPort =  usuarioInputPort;
+    }
 
     // CREATE
     @PostMapping
     public ResponseEntity<UsuarioRequest> criarUsuario(@Valid @RequestBody CriarUsuarioRequest request) {
-        UsuarioRequest usuarioCriado = usuarioInputPort.criarUsuario(request);
-        return ResponseEntity.status(201).body(usuarioCriado);
+        CriarUsuarioRequest criarUsuarioRequest = usuarioMapper.toRequest(request);
+        UsuarioRequest usuarioNovo = usuarioInputPort.criarUsuario(request);
+        return ResponseEntity.status(201).body(usuarioNovo);
     }
 
     // READ

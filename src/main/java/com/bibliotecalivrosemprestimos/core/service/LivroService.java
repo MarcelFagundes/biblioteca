@@ -4,8 +4,6 @@ import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.EmprestimoEntity;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.UsuarioEntity;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.port.input.LivroInputPort;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;

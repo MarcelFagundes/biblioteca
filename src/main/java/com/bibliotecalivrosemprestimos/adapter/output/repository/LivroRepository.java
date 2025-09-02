@@ -1,7 +1,10 @@
-package com.bibliotecalivrosemprestimos.adapter.output.repository.impl;
+package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class LivroRepositoryImpl implements LivroOutputPort {
+public class LivroRepository implements LivroOutputPort {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -166,7 +169,6 @@ public class LivroRepositoryImpl implements LivroOutputPort {
             Object[] usuarioInfo = new Object[3];
             usuarioInfo[0] = rs.getLong("usuario_id");
             usuarioInfo[1] = rs.getString("usuario_nome");
-            System.out.println(usuarioInfo[1]);
             usuarioInfo[2] = rs.getString("usuario_email");
             result[2] = usuarioInfo;
 

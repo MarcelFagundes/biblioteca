@@ -11,6 +11,7 @@ import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 @Component
