@@ -7,10 +7,8 @@ import java.time.LocalDateTime;
 public record CriarEmprestimoRequest(
         @NotNull
         Long livroId,
-
         @NotNull
         Long usuarioId,
-
         @Future
         LocalDateTime devolucaoPrevista
 ) {}

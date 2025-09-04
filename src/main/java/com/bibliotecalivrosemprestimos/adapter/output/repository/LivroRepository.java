@@ -1,10 +1,7 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
-import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
-import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

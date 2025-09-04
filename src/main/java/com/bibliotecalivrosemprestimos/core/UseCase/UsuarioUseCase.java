@@ -1,8 +1,6 @@
-package com.bibliotecalivrosemprestimos.core.service;
+package com.bibliotecalivrosemprestimos.core.UseCase;
 
-import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioEmprestimosMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
-import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.adapter.input.exception.BusinessException;
@@ -10,19 +8,17 @@ import com.bibliotecalivrosemprestimos.adapter.input.exception.NotFoundException
 import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 
-@Component
-public class UsuarioService implements UsuarioInputPort {
+public class UsuarioUseCase implements UsuarioInputPort {
 
     private final UsuarioOutputPort usuarioOutputPort;
 
-    public UsuarioService(UsuarioOutputPort usuarioOutputPort) {
+    public UsuarioUseCase(UsuarioOutputPort usuarioOutputPort) {
         this.usuarioOutputPort = usuarioOutputPort;
     }
 
+    @Override
     public UsuarioRequest criarUsuario(CriarUsuarioRequest request) {
         // Validação de e-mail único
         if (usuarioOutputPort.existsByEmail(request.email())) {
@@ -34,13 +30,12 @@ public class UsuarioService implements UsuarioInputPort {
                 request.email()
         );
 
-//        UsuarioRequest usuarioRequest = UsuarioMapper.INSTANCE.fromEntity(usuario);
-
         usuario = usuarioOutputPort.save(usuario);
 
         return UsuarioMapper.INSTANCE.fromEntity(usuario);
     }
 
+    @Override
     public UsuarioRequest buscarPorId(Long id) {
         Usuario usuario = usuarioOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
@@ -48,7 +43,7 @@ public class UsuarioService implements UsuarioInputPort {
         return UsuarioMapper.INSTANCE.fromEntity(usuario);
     }
 
-
+    @Override
     public List<UsuarioRequest> listarTodos() {
         return usuarioOutputPort.findAll()
                 .stream()
@@ -56,29 +51,12 @@ public class UsuarioService implements UsuarioInputPort {
                 .toList();
     }
 
-    public List<UsuarioComEmprestimosRequest> listarUsuariosComEmprestimos() {
+    @Override
+    public List<UsuarioRequest> listarUsuariosComEmprestimos() {
 
          return usuarioOutputPort.findUsuariosComEmprestimos()
                 .stream()
-                .map(UsuarioEmprestimosMapper.INSTANCE::objectArrayToDto)
+                .map(UsuarioMapper.INSTANCE::objectArrayToDto)
                 .toList();
     }
-
-
-//    private UsuarioComEmprestimosRequest toUsuarioComEmprestimosDTO(UsuarioRequest usuarioRequest, UsuarioComEmprestimosRequest usuarioComEmprestimosRequest) {
-////        Usuario usuario = (Usuario) result[0];
-////        Emprestimo totalEmprestimos = (Emprestimo) result[1];
-////        Emprestimo emprestimosAtivos = (Emprestimo) result[2];
-//
-////        UsuarioRequest usuarioRequest = UsuarioMapper.INSTANCE.fromEntity(usuario);
-////        EmprestimoMapper emprestimoMapper = UsuarioMapper.INSTANCE.fromEntity(emprestimo);
-//
-//        return new UsuarioComEmprestimosRequest(
-//                usuarioRequest.id(),
-//                usuarioRequest.nome(),
-//                usuarioRequest.email(),
-//                usuarioComEmprestimosRequest.emprestimosAtivos(),
-//                usuarioComEmprestimosRequest.emprestimosAtivos()
-//        );
-//    }
 }

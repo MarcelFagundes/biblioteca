@@ -1,4 +1,4 @@
-package com.bibliotecalivrosemprestimos.core.service;
+package com.bibliotecalivrosemprestimos.core.UseCase;
 
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.EmprestimoMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.MultaRequest;
@@ -13,28 +13,25 @@ import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarEmp
 import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.adapter.input.exception.NotFoundException;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class EmprestimoService implements EmprestimoInputPort {
+public class EmprestimoUseCase implements EmprestimoInputPort {
 
     private final EmprestimoOutputPort emprestimoOutputPort;
     private final LivroOutputPort livroOutputPort;
     private final UsuarioOutputPort usuarioOutputPort;
 
-    public EmprestimoService(EmprestimoOutputPort emprestimoOutputPort,
-                            LivroOutputPort livroOutputPort,
-                            UsuarioOutputPort usuarioOutputPort) {
+    public EmprestimoUseCase(EmprestimoOutputPort emprestimoOutputPort,
+                             LivroOutputPort livroOutputPort,
+                             UsuarioOutputPort usuarioOutputPort) {
         this.emprestimoOutputPort = emprestimoOutputPort;
         this.livroOutputPort = livroOutputPort;
         this.usuarioOutputPort = usuarioOutputPort;
     }
 
-     public EmprestimoRequest criarEmprestimo(CriarEmprestimoRequest request) {
+    public EmprestimoRequest criarEmprestimo(CriarEmprestimoRequest request) {
          // Validações
          Livro livro = livroOutputPort.findById(request.livroId())
                  .orElseThrow(() -> new NotFoundException("Livro não encontrado"));

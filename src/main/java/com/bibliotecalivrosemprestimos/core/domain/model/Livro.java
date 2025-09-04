@@ -95,4 +95,16 @@ public class Livro {
         Livro livro = (Livro) o;
         return Objects.equals(id, livro.id);
     }
+
+    @Override
+    public String toString() {
+        return "Livro{" +
+                "id=" + id +
+                ", isbn='" + isbn + '\'' +
+                ", titulo='" + titulo + '\'' +
+                ", autor='" + autor + '\'' +
+                ", estoque=" + estoque +
+                ", ativo=" + ativo +
+                '}';
+    }
 }

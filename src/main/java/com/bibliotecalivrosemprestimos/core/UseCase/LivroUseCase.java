@@ -1,4 +1,4 @@
-package com.bibliotecalivrosemprestimos.core.service;
+package com.bibliotecalivrosemprestimos.core.UseCase;
 
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
@@ -12,16 +12,14 @@ import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarLiv
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.exception.BusinessException;
 import com.bibliotecalivrosemprestimos.adapter.input.exception.NotFoundException;
-import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class LivroService implements LivroInputPort {
+public class LivroUseCase implements LivroInputPort {
 
     private final LivroOutputPort livroOutputPort;
 
-    public LivroService(LivroOutputPort livroOutputPort) {
+    public LivroUseCase(LivroOutputPort livroOutputPort) {
         this.livroOutputPort = livroOutputPort;
     }
 

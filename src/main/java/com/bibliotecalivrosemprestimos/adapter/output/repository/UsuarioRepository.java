@@ -1,8 +1,8 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
+
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -17,18 +17,21 @@ import java.util.Optional;
 @Repository
 public class UsuarioRepository implements UsuarioOutputPort {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    public UsuarioRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     // RowMapper para converter ResultSet em UsuarioEntity
     private final RowMapper<Usuario> usuarioRowMapper = (rs, rowNum) -> {
-        Usuario usuario = new Usuario();
-        usuario.setId(rs.getLong("id"));
-//        usuario.setNome(rs.getString("usuario"));
-//        usuario.setEmail(rs.getString("email"));
+          Usuario usuario = new Usuario();
+          usuario.setId(rs.getLong("id"));
+          usuario.setNome(rs.getString("nome"));
+          usuario.setEmail(rs.getString("email"));
 
-        return usuario;
-    };
+         return usuario;
+        };
 
     @Override
     public Usuario save(Usuario usuario) {
@@ -108,28 +111,27 @@ public class UsuarioRepository implements UsuarioOutputPort {
 
     @Override
     public List<Object[]> findUsuariosComEmprestimos() {
-        String sql = "SELECT u.id, u.nome as nome, u.email as email, " +
-                "COUNT(e.id) as total_emprestimos, " +
-                "SUM(CASE WHEN e.devolvido_em IS NULL THEN 1 ELSE 0 END) as emprestimos_ativos " +
-                "FROM usuario u " +
-                "LEFT JOIN emprestimo e ON e.usuario_id = u.id " +
-                "GROUP BY u.id, u.nome, u.email " +
-                "ORDER BY u.nome";
+        String sql = "SELECT * FROM fn_usuarios_com_emprestimos()";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            Object[] result = new Object[10];
+            Object[] result = new Object[3];
 
-//            // Mapear UsuarioEntity
-            Usuario usuario = usuarioRowMapper.mapRow(rs, rowNum);
-//            result[0] = rs.getLong("id");
-//           result[0] = rs.getString("nome");
+            // 1. Criar e popular o objeto Usuario
+            Usuario usuario = new Usuario();
+            usuario.setId(rs.getLong("id"));
+            usuario.setNome(rs.getString("nome"));
+            usuario.setEmail(rs.getString("email"));
 
-            // Total de empréstimos
-            result[1] = rs.getLong("total_emprestimos");
+            // 2. Adicionar ao array
+//            result[0] = usuario;                      // Usuario completo
+            result[1] = rs.getLong("total_emprestimos"); // Total de empréstimos
+            result[2] = rs.getLong("emprestimos_ativos"); // Empréstimos ativos
 
-            // Empréstimos ativos
-            result[2] = rs.getLong("emprestimos_ativos");
-
+            // DEBUG: Verifique os valores
+            System.out.println("Usuario: id=" + usuario.getId() +
+                    ", nome=" + usuario.getNome() +
+                    ", email=" + usuario.getEmail());
+            System.out.println("Totais: total=" + result[1] + ", ativos=" + result[2]);
 
             return result;
         });

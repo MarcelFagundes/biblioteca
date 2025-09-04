@@ -1,5 +1,6 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
+import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
@@ -21,8 +22,11 @@ import java.util.Optional;
 @Repository
 public class EmprestimoRepository implements EmprestimoOutputPort {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    public EmprestimoRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     // RowMapper para converter ResultSet em EmprestimoEntity
     private final RowMapper<Emprestimo> emprestimoRowMapper = (rs, rowNum) -> {
@@ -104,13 +108,42 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
         }
     }
 
+//    @Override
+//    public List<Emprestimo> findAll() {
+//        String sql = "SELECT e.*, l.titulo, u.nome " +
+//                "LEFT JOIN usuario u ON e.usuario_id = u.id";
+//        return jdbcTemplate.query(sql, emprestimoRowMapper);
+//    }
+
     @Override
     public List<Emprestimo> findAll() {
-        String sql = "SELECT e.*, l.titulo, u.nome " +
-                "FROM emprestimo e " +
-                "LEFT JOIN livro l ON e.livro_id = l.id " +
-                "LEFT JOIN usuario u ON e.usuario_id = u.id";
-        return jdbcTemplate.query(sql, emprestimoRowMapper);
+        String sql = "SELECT * FROM fn_emprestimos_completos()";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Emprestimo emprestimo = new Emprestimo();
+
+            // Dados básicos do empréstimo
+            emprestimo.setId(rs.getLong("id"));
+            emprestimo.setRetiradoEm(rs.getTimestamp("retirado_em").toLocalDateTime());
+            emprestimo.setDevolucaoPrevista(rs.getTimestamp("devolucao_prevista").toLocalDateTime());
+
+            Timestamp devolvidoEm = rs.getTimestamp("devolvido_em");
+            emprestimo.setDevolvidoEm(devolvidoEm != null ? devolvidoEm.toLocalDateTime() : null);
+
+            // Dados do livro (join)
+            Livro livro = new Livro();
+            livro.setId(rs.getLong("livro_id"));
+            livro.setTitulo(rs.getString("livro_titulo"));
+            emprestimo.setLivro(livro);
+
+            // Dados do usuário (join)
+            Usuario usuario = new Usuario();
+            usuario.setId(rs.getLong("usuario_id"));
+            usuario.setNome(rs.getString("usuario_nome"));
+            emprestimo.setUsuario(usuario);
+
+            return emprestimo;
+        });
     }
 
     @Override

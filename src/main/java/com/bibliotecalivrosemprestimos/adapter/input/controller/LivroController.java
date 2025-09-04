@@ -28,15 +28,6 @@ public class LivroController {
         this.livroInputPort =  livroInputPort;
     }
 
-
-    // CREATE
-    @PostMapping
-    public ResponseEntity<LivroRequest> criarLivro(@RequestBody CriarLivroRequest request) {
-        CriarLivroRequest criarLivroRequest = livroMapper.toRequest(request);
-        LivroRequest livroNovo = livroInputPort.criarLivro(criarLivroRequest);
-        return ResponseEntity.status(201).body(livroNovo);
-    }
-
     // READ
     @GetMapping
     public ResponseEntity<List<LivroRequest>> listarLivros(
@@ -44,6 +35,14 @@ public class LivroController {
             @RequestParam(required = false) Boolean ativo) {
         List<LivroRequest> livros = livroInputPort.listarLivros(titulo, ativo);
         return ResponseEntity.ok(livros);
+    }
+
+    // CREATE
+    @PostMapping
+    public ResponseEntity<LivroRequest> criarLivro(@RequestBody CriarLivroRequest request) {
+        CriarLivroRequest criarLivroRequest = livroMapper.toRequest(request);
+        LivroRequest livroNovo = livroInputPort.criarLivro(criarLivroRequest);
+        return ResponseEntity.status(201).body(livroNovo);
     }
 
     @GetMapping("/{id}")
