@@ -1,16 +1,14 @@
-package com.bibliotecalivrosemprestimos.validation;
+package com.bibliotecalivrosemprestimos.adapter.input.request.validation;
 
 import jakarta.validation.constraints.Future;
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record CriarEmprestimoRequest(
         @NotNull
         Long livroId,
-
         @NotNull
         Long usuarioId,
-
         @Future
         LocalDateTime devolucaoPrevista
 ) {}

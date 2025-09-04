@@ -12,8 +12,8 @@ public class Emprestimo {
     private LocalDateTime devolvidoEm;
 
     // Construtores
+
     public Emprestimo() {
-        this.retiradoEm = LocalDateTime.now();
     }
 
     public Emprestimo(Livro livro, Usuario usuario, LocalDateTime devolucaoPrevista) {
@@ -22,6 +22,15 @@ public class Emprestimo {
         this.usuario = usuario;
         this.devolucaoPrevista = devolucaoPrevista;
     }
+
+//    public Emprestimo(Long id, Livro livro, Usuario usuario, LocalDateTime retiradoEm, LocalDateTime devolucaoPrevista, LocalDateTime devolvidoEm) {
+//        this.id = id;
+//        this.livro = livro;
+//        this.usuario = usuario;
+//        this.retiradoEm = retiradoEm;
+//        this.devolucaoPrevista = devolucaoPrevista;
+//        this.devolvidoEm = devolvidoEm;
+//    }
 
     // Getters e Setters
     public Long getId() {
@@ -77,5 +86,17 @@ public class Emprestimo {
 
     public boolean isAtrasado() {
         return isAtivo() && LocalDateTime.now().isAfter(devolucaoPrevista);
+    }
+
+    @Override
+    public String toString() {
+        return "Emprestimo{" +
+                "id=" + id +
+                ", livro=" + livro +
+                ", usuario=" + usuario +
+                ", retiradoEm=" + retiradoEm +
+                ", devolucaoPrevista=" + devolucaoPrevista +
+                ", devolvidoEm=" + devolvidoEm +
+                '}';
     }
 }

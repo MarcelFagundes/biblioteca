@@ -1,26 +1,25 @@
-package com.bibliotecalivrosemprestimos.core.service;
+package com.bibliotecalivrosemprestimos.core.UseCase;
 
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
+import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.EmprestimoEntity;
-import com.bibliotecalivrosemprestimos.adapter.output.entity.UsuarioEntity;
+import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.port.input.LivroInputPort;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
-import com.bibliotecalivrosemprestimos.validation.AtualizarLivroRequest;
-import com.bibliotecalivrosemprestimos.validation.CriarLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.AtualizarLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarLivroRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
-import com.bibliotecalivrosemprestimos.exception.BusinessException;
-import com.bibliotecalivrosemprestimos.exception.NotFoundException;
-import org.springframework.stereotype.Component;
+import com.bibliotecalivrosemprestimos.adapter.input.exception.BusinessException;
+import com.bibliotecalivrosemprestimos.adapter.input.exception.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class LivroService implements LivroInputPort {
+public class LivroUseCase implements LivroInputPort {
 
     private final LivroOutputPort livroOutputPort;
 
-    public LivroService(LivroOutputPort livroOutputPort) {
+    public LivroUseCase(LivroOutputPort livroOutputPort) {
         this.livroOutputPort = livroOutputPort;
     }
 
@@ -38,7 +37,8 @@ public class LivroService implements LivroInputPort {
 
          livro.incrementarEstoque();
          livro = livroOutputPort.save(livro);
-         return LivroRequest.fromEntity(livro);
+
+         return LivroMapper.INSTANCE.fromEntity(livro);
      }
 
     public List<LivroRequest> listarLivros(String titulo, Boolean ativo) {
@@ -54,14 +54,14 @@ public class LivroService implements LivroInputPort {
         }
 
         return livros.stream()
-                .map(LivroRequest::fromEntity)
+                .map(LivroMapper.INSTANCE::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public LivroRequest buscarPorId(Long id) {
         Livro livro = livroOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
-        return LivroRequest.fromEntity(livro);
+        return LivroMapper.INSTANCE.fromEntity(livro);
     }
 
      public LivroRequest atualizarLivro(Long id, AtualizarLivroRequest request) {
@@ -74,13 +74,14 @@ public class LivroService implements LivroInputPort {
          livro.setAtivo(request.ativo());
 
          livro = livroOutputPort.save(livro);
-         return LivroRequest.fromEntity(livro);
+
+         return LivroMapper.INSTANCE.fromEntity(livro);
      }
 
     public void desativarLivro(Long id) {
         Livro livro = livroOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
-//        livro.setAtivo(false);
+
         livro.exclusaoLogica();
         livroOutputPort.save(livro);
     }
@@ -98,18 +99,18 @@ public class LivroService implements LivroInputPort {
     }
 
     private LivroComEmprestimoRequest toLivroComEmprestimoDTO(Object[] result) {
-         Livro livro = (Livro) result[0];
-         EmprestimoEntity emprestimo = (EmprestimoEntity) result[1];
-         UsuarioEntity usuario = (UsuarioEntity) result[2];
+         LivroRequest livro = (LivroRequest) result[0];
+         EmprestimoRequest emprestimo = (EmprestimoRequest) result[1];
+         UsuarioRequest usuario = (UsuarioRequest) result[2];
 
          return new LivroComEmprestimoRequest(
-             livro.getId(),
-             livro.getTitulo(),
-             livro.getAutor(),
-             usuario.getNome(),
-             usuario.getEmail(),
-             emprestimo.getRetiradoEm(),
-             emprestimo.getDevolucaoPrevista()
+             livro.id(),
+             livro.titulo(),
+             livro.autor(),
+             usuario.nome(),
+             usuario.email(),
+             emprestimo.retiradoEm(),
+             emprestimo.devolucaoPrevista()
          );
      }
 }

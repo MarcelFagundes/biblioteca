@@ -1,35 +1,15 @@
 package com.bibliotecalivrosemprestimos.adapter.output.entity;
 
 import java.util.Objects;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
-@Entity
-@Table(name = "livro",
-       uniqueConstraints = @UniqueConstraint(columnNames = "isbn"))
+
 public class LivroEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
-
-    @Column(nullable = false, unique = true)
     private String isbn;
-
-    @Column(nullable = false)
     private String titulo;
-
-    @Column(nullable = false)
     private String autor;
-
-    @Column(nullable = false)
     private Integer estoque;
-
-    @Column(nullable = false)
     private Boolean ativo;
 
     // Construtores

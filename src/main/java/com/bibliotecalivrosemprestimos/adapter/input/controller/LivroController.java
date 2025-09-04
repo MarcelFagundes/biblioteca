@@ -3,32 +3,29 @@ package com.bibliotecalivrosemprestimos.adapter.input.controller;
 import java.util.List;
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
-import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.port.input.LivroInputPort;
-import com.bibliotecalivrosemprestimos.validation.AtualizarLivroRequest;
-import com.bibliotecalivrosemprestimos.validation.CriarLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.AtualizarLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarLivroRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
 import jakarta.validation.Valid;
 
+
+
 @RestController
 @RequestMapping("/livros")
 public class LivroController {
 
-    @Autowired
+
     private LivroInputPort livroInputPort;
 
-    private LivroRequest livroRequest;
+    @Autowired
+    private LivroMapper livroMapper;
 
-    Livro entity = LivroMapper.INSTANCE.toEntity(livroRequest);
-
-    // CREATE
-    @PostMapping
-    public ResponseEntity<LivroRequest> criarLivro(@RequestBody CriarLivroRequest request) {
-        LivroRequest livro = livroInputPort.criarLivro(request);
-        return ResponseEntity.status(201).body(livro);
+    public LivroController(LivroInputPort livroInputPort) {
+        this.livroInputPort =  livroInputPort;
     }
 
     // READ
@@ -38,6 +35,14 @@ public class LivroController {
             @RequestParam(required = false) Boolean ativo) {
         List<LivroRequest> livros = livroInputPort.listarLivros(titulo, ativo);
         return ResponseEntity.ok(livros);
+    }
+
+    // CREATE
+    @PostMapping
+    public ResponseEntity<LivroRequest> criarLivro(@RequestBody CriarLivroRequest request) {
+        CriarLivroRequest criarLivroRequest = livroMapper.toRequest(request);
+        LivroRequest livroNovo = livroInputPort.criarLivro(criarLivroRequest);
+        return ResponseEntity.status(201).body(livroNovo);
     }
 
     @GetMapping("/{id}")
@@ -51,8 +56,9 @@ public class LivroController {
     public ResponseEntity<LivroRequest> atualizarLivro(
             @PathVariable Long id,
             @Valid @RequestBody AtualizarLivroRequest request) {
-        LivroRequest livro = livroInputPort.atualizarLivro(id, request);
-        return ResponseEntity.ok(livro);
+        AtualizarLivroRequest atualizarLivroRequest = livroMapper.toRequest(request);
+        LivroRequest livroAtualizar = livroInputPort.atualizarLivro(id, request);
+        return ResponseEntity.ok(livroAtualizar);
     }
 
     // DELETE (lógico)

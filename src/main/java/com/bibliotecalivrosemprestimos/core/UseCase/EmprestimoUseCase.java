@@ -1,5 +1,6 @@
-package com.bibliotecalivrosemprestimos.core.service;
+package com.bibliotecalivrosemprestimos.core.UseCase;
 
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.EmprestimoMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.MultaRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
@@ -8,32 +9,29 @@ import com.bibliotecalivrosemprestimos.port.input.EmprestimoInputPort;
 import com.bibliotecalivrosemprestimos.port.output.EmprestimoOutputPort;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
-import com.bibliotecalivrosemprestimos.validation.CriarEmprestimoRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
-import com.bibliotecalivrosemprestimos.exception.BusinessException;
-import com.bibliotecalivrosemprestimos.exception.NotFoundException;
-import org.springframework.stereotype.Component;
-
+import com.bibliotecalivrosemprestimos.adapter.input.exception.BusinessException;
+import com.bibliotecalivrosemprestimos.adapter.input.exception.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class EmprestimoService implements EmprestimoInputPort {
+public class EmprestimoUseCase implements EmprestimoInputPort {
 
     private final EmprestimoOutputPort emprestimoOutputPort;
     private final LivroOutputPort livroOutputPort;
     private final UsuarioOutputPort usuarioOutputPort;
 
-    public EmprestimoService(EmprestimoOutputPort emprestimoOutputPort,
-                            LivroOutputPort livroOutputPort,
-                            UsuarioOutputPort usuarioOutputPort) {
+    public EmprestimoUseCase(EmprestimoOutputPort emprestimoOutputPort,
+                             LivroOutputPort livroOutputPort,
+                             UsuarioOutputPort usuarioOutputPort) {
         this.emprestimoOutputPort = emprestimoOutputPort;
         this.livroOutputPort = livroOutputPort;
         this.usuarioOutputPort = usuarioOutputPort;
     }
 
-     public EmprestimoRequest criarEmprestimo(CriarEmprestimoRequest request) {
+    public EmprestimoRequest criarEmprestimo(CriarEmprestimoRequest request) {
          // Validações
          Livro livro = livroOutputPort.findById(request.livroId())
                  .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
@@ -50,7 +48,6 @@ public class EmprestimoService implements EmprestimoInputPort {
                  .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
          // Verifica se já existe empréstimo em aberto para o mesmo livro e usuário
-//         boolean emprestimoDuplicado = emprestimoRepository.existsByLivroAndUsuarioAndDevolvidoEmIsNull(
            boolean emprestimoDuplicado = emprestimoOutputPort.existsByLivroAndUsuarioAndDevolvidoEmIsNull(
              livro, usuario);
 
@@ -77,7 +74,7 @@ public class EmprestimoService implements EmprestimoInputPort {
          livroOutputPort.save(livro);
 
          emprestimo = emprestimoOutputPort.save(emprestimo);
-         return EmprestimoRequest.fromEntity(emprestimo);
+         return EmprestimoMapper.INSTANCE.fromEntity(emprestimo);
      }
 
     public List<EmprestimoRequest> listarEmprestimos(Long usuarioId, Boolean ativo) {
@@ -102,7 +99,7 @@ public class EmprestimoService implements EmprestimoInputPort {
         }
 
         return emprestimos.stream()
-                .map(EmprestimoRequest::fromEntity)
+                .map(EmprestimoMapper.INSTANCE::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -119,11 +116,11 @@ public class EmprestimoService implements EmprestimoInputPort {
 
         // Atualiza estoque
         Livro livro = emprestimo.getLivro();
-//        livro.decrementarEstoque();
+        livro.decrementarEstoque();
         livroOutputPort.save(livro);
 
         emprestimo = emprestimoOutputPort.save(emprestimo);
-        return EmprestimoRequest.fromEntity(emprestimo);
+        return EmprestimoMapper.INSTANCE.fromEntity(emprestimo);
     }
 
      public MultaRequest calcularMulta(Long id) {

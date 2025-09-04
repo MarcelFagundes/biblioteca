@@ -1,25 +1,139 @@
-//package com.bibliotecalivrosemprestimos.adapter.output.repository;
-//
-//import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
-//import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
-//
-//import java.util.List;
-//import java.util.Optional;
-//
-//public interface UsuarioRepository extends UsuarioOutputPort {
-//    // Métodos CRUD básicos
-//    Usuario save(Usuario usuario);
-//    Optional<Usuario> findById(Long id);
-//    List<Usuario> findAll();
-//    void deleteById(Long id);
-//
-//    // Métodos específicos do domínio
-//    boolean existsByEmail(String email);
-//    Optional<Usuario> findByEmail(String email);
-//
-//    // Método para buscar usuários com estatísticas de empréstimos
-//    List<Object[]> findUsuariosComEmprestimos();
-//
-//    // Método adicional para atualização
-//    int update(Usuario usuario);
-//}
+package com.bibliotecalivrosemprestimos.adapter.output.repository;
+
+
+import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+@Repository
+public class UsuarioRepository implements UsuarioOutputPort {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public UsuarioRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    // RowMapper para converter ResultSet em UsuarioEntity
+    private final RowMapper<Usuario> usuarioRowMapper = (rs, rowNum) -> {
+          Usuario usuario = new Usuario();
+          usuario.setId(rs.getLong("id"));
+          usuario.setNome(rs.getString("nome"));
+          usuario.setEmail(rs.getString("email"));
+
+         return usuario;
+        };
+
+    @Override
+    public Usuario save(Usuario usuario) {
+        if (usuario.getId() == null) {
+            // INSERT
+            String sql = "INSERT INTO usuario (nome, email) " +
+                    "VALUES (?, ?) RETURNING id" ;
+
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, usuario.getNome());
+                ps.setString(2, usuario.getEmail());
+                return ps;
+            }, keyHolder);
+
+            usuario.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
+            return usuario;
+        } else {
+            // UPDATE
+            update(usuario);
+            return usuario;
+        }
+    }
+
+    @Override
+    public int update(Usuario usuario) {
+        String sql = "UPDATE usuario SET nome = ?, email = ? WHERE id = ?";
+
+        return jdbcTemplate.update(sql,
+                usuario.getNome(),
+                usuario.getEmail(),
+                usuario.getId());
+    }
+
+    @Override
+    public Optional<Usuario> findById(Long id) {
+        String sql = "SELECT * FROM usuario WHERE id = ?";
+        try {
+            Usuario usuario = jdbcTemplate.queryForObject(sql, usuarioRowMapper, id);
+            return Optional.ofNullable(usuario);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<Usuario> findAll() {
+        String sql = "SELECT * FROM usuario";
+        return jdbcTemplate.query(sql, usuarioRowMapper);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM usuario WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        String sql = "SELECT COUNT(*) FROM usuario WHERE email = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        return count != null && count > 0;
+    }
+
+    @Override
+    public Optional<Usuario> findByEmail(String email) {
+        String sql = "SELECT * FROM usuario WHERE email = ?";
+        try {
+            Usuario usuario = jdbcTemplate.queryForObject(sql, usuarioRowMapper, email);
+            return Optional.ofNullable(usuario);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<Object[]> findUsuariosComEmprestimos() {
+        String sql = "SELECT * FROM fn_usuarios_com_emprestimos()";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Object[] result = new Object[3];
+
+            // 1. Criar e popular o objeto Usuario
+            Usuario usuario = new Usuario();
+            usuario.setId(rs.getLong("id"));
+            usuario.setNome(rs.getString("nome"));
+            usuario.setEmail(rs.getString("email"));
+
+            // 2. Adicionar ao array
+//            result[0] = usuario;                      // Usuario completo
+            result[1] = rs.getLong("total_emprestimos"); // Total de empréstimos
+            result[2] = rs.getLong("emprestimos_ativos"); // Empréstimos ativos
+
+            // DEBUG: Verifique os valores
+            System.out.println("Usuario: id=" + usuario.getId() +
+                    ", nome=" + usuario.getNome() +
+                    ", email=" + usuario.getEmail());
+            System.out.println("Totais: total=" + result[1] + ", ativos=" + result[2]);
+
+            return result;
+        });
+    }
+}

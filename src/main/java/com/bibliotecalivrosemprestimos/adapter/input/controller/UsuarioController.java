@@ -1,13 +1,11 @@
 package com.bibliotecalivrosemprestimos.adapter.input.controller;
 
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
-import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
-import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
-import com.bibliotecalivrosemprestimos.validation.CriarUsuarioRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,18 +14,22 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioInputPort usuarioInputPort;
+    private final UsuarioInputPort usuarioInputPort;
 
-    private UsuarioRequest usuarioRequest;
+    private final UsuarioMapper usuarioMapper;
 
-    Usuario usuario = UsuarioMapper.INSTANCE.toEntity(usuarioRequest);
+    public UsuarioController(UsuarioInputPort usuarioInputPort, UsuarioMapper usuarioMapper) {
+        this.usuarioInputPort = usuarioInputPort;
+        this.usuarioMapper = usuarioMapper;
+    }
+
 
     // CREATE
     @PostMapping
     public ResponseEntity<UsuarioRequest> criarUsuario(@Valid @RequestBody CriarUsuarioRequest request) {
-        UsuarioRequest usuario = usuarioInputPort.criarUsuario(request);
-        return ResponseEntity.status(201).body(usuario);
+        CriarUsuarioRequest criarUsuarioRequest = usuarioMapper.toRequest(request);
+        UsuarioRequest usuarioNovo = usuarioInputPort.criarUsuario(request);
+        return ResponseEntity.status(201).body(usuarioNovo);
     }
 
     // READ
@@ -37,10 +39,17 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
+    // READ
+    @GetMapping
+    public ResponseEntity<List<UsuarioRequest>> listarLivros() {
+        List<UsuarioRequest> usuario = usuarioInputPort.listarTodos();
+        return ResponseEntity.ok(usuario);
+    }
+
     // Relatório de usuários com empréstimos
     @GetMapping("/com-emprestimos")
-    public ResponseEntity<List<UsuarioComEmprestimosRequest>> listarUsuariosComEmprestimos() {
-        List<UsuarioComEmprestimosRequest> usuarios = usuarioInputPort.listarUsuariosComEmprestimos();
+    public ResponseEntity<List<UsuarioRequest>> listarUsuariosComEmprestimos() {
+        List<UsuarioRequest> usuarios = usuarioInputPort.listarUsuariosComEmprestimos();
         return ResponseEntity.ok(usuarios);
     }
 }
