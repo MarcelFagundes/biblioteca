@@ -18,7 +18,7 @@ Sistema de gerenciamento de biblioteca com controle completo de livros, usuário
 - **Java 21** - Linguagem de programação
 - **Spring Boot 3.x** - Framework principal
 - **Spring Data JPA** - Persistência de dados
-- **H2 Database** - Banco de dados em memória (desenvolvimento)
+- **Postgree** - Banco de dados
 - **Maven** - Gerenciamento de dependências
 - **Jakarta Bean Validation** - Validação de dados
 - **JUnit 5** - Testes unitários
@@ -30,18 +30,64 @@ src/
 ├── main/
 │   ├── java/
 │   │   └── com/
-│   │       └── biblioteca/
-│   │            ├── controller/
-│   │            ├── dto/
-|   |            ├── entity/ 
-│   │            ├── exception/
-|   |            ├── repository/ 
-│   │            ├── service/
-│   │            ├── validation/
-│   │            ├── exception/
-│   │            └── repository/
+│   │       └── bibliotecalivrosemprestimos/
+│   │            ├── core/                           # 👇 DOMÍNIO (HEXÁGONO)
+│   │            │   ├── domain/
+│   │            │   │   ├── model/                  # Entidades de domínio
+│   │            │   │   │   ├── Usuario.java
+│   │            │   │   │   ├── Livro.java
+│   │            │   │   │   └── Emprestimo.java
+│   │            │   │   └── usecase/                # Lógica de negócio
+│   │            │   │       ├── UsuarioUseCase.java
+│   │            │   │       ├── LivroUseCase.java
+│   │            │   │       └── EmprestimoUseCase.java
+│   │            │   └── container/                  # Injeção de dependência
+│   │            │       └── DependencyContainer.java
+│   │            ├── port/                           # 👇 PORTAS (INTERFACES)
+│   │            │   ├── input/                      # Portas de entrada
+│   │            │   │   ├── UsuarioInputPort.java
+│   │            │   │   ├── LivroInputPort.java
+│   │            │   │   └── EmprestimoInputPort.java
+│   │            │   └── output/                     # Portas de saída
+│   │            │       ├── UsuarioRepository.java
+│   │            │       ├── LivroRepository.java
+│   │            │       └── EmprestimoRepository.java
+│   │            └── adapter/                        # 👇 ADAPTADORES
+│   │                ├── input/                      # Adaptadores de entrada
+│   │                │   ├── controller/             # Controladores HTTP
+│   │                │   │   ├── UsuarioController.java
+│   │                │   │   ├── LivroController.java
+│   │                │   │   └── EmprestimoController.java
+│   │                │   ├── mapper/                 # Mappers DTO -> Entity
+│   │                │   │   ├── UsuarioMapper.java
+│   │                │   │   ├── LivroMapper.java
+│   │                │   │   └── EmprestimoMapper.java
+│   │                │   └── request/                # DTOs de entrada
+│   │                │       ├── UsuarioRequest.java
+│   │                │       ├── LivroRequest.java
+│   │                │       └── EmprestimoRequest.java
+│   │                └── output/                     # Adaptadores de saída
+│   │                    ├── entity/                 # Entidades de persistência
+│   │                    │   ├── UsuarioEntity.java
+│   │                    │   ├── LivroEntity.java
+│   │                    │   └── EmprestimoEntity.java
+│   │                    └── repository/             # Implementações de repositório
+│   │                        ├── impl/
+│   │                        │   ├── UsuarioRepository.java
+│   │                        │   ├── LivroRepository.java
+│   │                        │   └── EmprestimoRepository.java
+│   │                        └── jdbc/               # Configuração JDBC
+│   │                            └── DatabaseConfig.java
 │   └── resources/
-        └── application.properties
+│       ├── application.properties
+│       ├── schema.sql                               # Schema do banco
+│       └── data.sql                                 # Dados iniciais
+└── test/                                            # Testes
+    └── java/
+        └── com/
+            └── bibliotecalivrosemprestimos/
+                ├── core/
+                └── adapter/
 
 ```
 
@@ -158,13 +204,6 @@ Execute os testes com o comando:
 mvn test
 ```
 
-## 📊 Banco de Dados
-
-O projeto utiliza H2 Database em modo de desenvolvimento. Acesse o console do H2 em:
-- URL: `http://localhost:8080/h2-console`
-- JDBC URL: `jdbc:h2:mem:testdb`
-- Usuário: `sa`
-- Senha: (vazio)
 
 ## 📝 Licença
 

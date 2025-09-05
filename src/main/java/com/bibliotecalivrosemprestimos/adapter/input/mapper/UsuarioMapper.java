@@ -19,19 +19,21 @@ public interface UsuarioMapper {
     UsuarioRequest fromEntity(Usuario usuario);
     CriarUsuarioRequest toRequest(CriarUsuarioRequest request);
 
-    @Mapping(target = "id", source = "usuario.id")
-    @Mapping(target = "nome", source = "usuario.nome")
-    @Mapping(target = "email", source = "usuario.email")
+
+
+//    @Mapping(target = "id", source = "usuario.id")
+//    @Mapping(target = "nome", source = "usuario.nome")
+//    @Mapping(target = "email", source = "usuario.email")
     @Mapping(target = "emprestimosAtivos", source = "emprestimosAtivos")
     @Mapping(target = "totalEmprestimos", source = "totalEmprestimos")
 
     UsuarioRequest toDto(UsuarioRequest usuario, Long totalEmprestimos, Long emprestimosAtivos);
 
     default UsuarioRequest objectArrayToDto(Object[] result) {
-        UsuarioRequest usuarioRequest = (UsuarioRequest) result[0];
+        UsuarioRequest usuario = (UsuarioRequest) result[0];
         Long totalEmprestimos = (Long) result[1];
         Long emprestimosAtivos = (Long) result[2];
 
-        return toDto(usuarioRequest, totalEmprestimos, emprestimosAtivos);
+        return toDto(usuario, totalEmprestimos, emprestimosAtivos);
     }
 }

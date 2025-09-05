@@ -14,8 +14,11 @@ public class UsuarioUseCase implements UsuarioInputPort {
 
     private final UsuarioOutputPort usuarioOutputPort;
 
-    public UsuarioUseCase(UsuarioOutputPort usuarioOutputPort) {
+    private final UsuarioMapper usuarioMapper;
+
+    public UsuarioUseCase(UsuarioOutputPort usuarioOutputPort, UsuarioMapper usuarioMapper) {
         this.usuarioOutputPort = usuarioOutputPort;
+        this.usuarioMapper = usuarioMapper;
     }
 
     @Override
