@@ -1,6 +1,8 @@
 package com.bibliotecalivrosemprestimos.core.UseCase;
 
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.EmprestimoMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
@@ -94,23 +96,7 @@ public class LivroUseCase implements LivroInputPort {
     public List<LivroComEmprestimoRequest> listarLivrosEmprestados() {
          return livroOutputPort.findLivrosEmprestados()
                  .stream()
-                 .map(this::toLivroComEmprestimoDTO)
+                 .map(LivroMapper.INSTANCE::objectArrayToDto)
                  .collect(Collectors.toList());
     }
-
-    private LivroComEmprestimoRequest toLivroComEmprestimoDTO(Object[] result) {
-         LivroRequest livro = (LivroRequest) result[0];
-         EmprestimoRequest emprestimo = (EmprestimoRequest) result[1];
-         UsuarioRequest usuario = (UsuarioRequest) result[2];
-
-         return new LivroComEmprestimoRequest(
-             livro.id(),
-             livro.titulo(),
-             livro.autor(),
-             usuario.nome(),
-             usuario.email(),
-             emprestimo.retiradoEm(),
-             emprestimo.devolucaoPrevista()
-         );
-     }
 }

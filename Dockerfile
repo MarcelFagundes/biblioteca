@@ -12,3 +12,6 @@
 
     # Comando para executar a aplicação quando o contêiner iniciar
     ENTRYPOINT ["java", "-jar", "app.jar"]
+
+    # Iniciar Docker
+    # docker exec -it postgres_biblioteca psql -U usr_biblioteca -d biblioteca
