@@ -3,6 +3,7 @@ package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
+import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,30 +35,28 @@ public class UsuarioRepository implements UsuarioOutputPort {
          return usuario;
         };
 
-    @Override
-    public Usuario save(Usuario usuario) {
-        if (usuario.getId() == null) {
-            // INSERT
-            String sql = "INSERT INTO usuario (nome, email) " +
-                    "VALUES (?, ?) RETURNING id" ;
+@Override
+public Usuario save(Usuario usuario) {
+    //Usando Procedure no SQL
+    try {
+        String sql = "CALL pr_inserir_usuario(?, ?, ?, ?)"; // Agora 3 parâmetros
 
-            KeyHolder keyHolder = new GeneratedKeyHolder();
+        Long generatedId = jdbcTemplate.execute(sql, (CallableStatementCallback<Long>) cs -> {
+            cs.setString(1, usuario.getNome());
+            cs.setString(2, usuario.getEmail());
+            cs.registerOutParameter(3, Types.BIGINT);
+            cs.registerOutParameter(4, Types.VARCHAR);
+            cs.execute();
+            return cs.getLong(3);
+        });
 
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, usuario.getNome());
-                ps.setString(2, usuario.getEmail());
-                return ps;
-            }, keyHolder);
+        usuario.setId(generatedId);
+        return usuario;
 
-            usuario.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
-            return usuario;
-        } else {
-            // UPDATE
-            update(usuario);
-            return usuario;
-        }
+    } catch (Exception e) {
+        throw new RuntimeException("Erro ao inserir usuário: " + e.getMessage(), e);
     }
+}
 
     @Override
     public int update(Usuario usuario) {
