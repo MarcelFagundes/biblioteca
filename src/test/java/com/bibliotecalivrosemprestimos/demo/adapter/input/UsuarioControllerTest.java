@@ -1,55 +1,47 @@
-package com.bibliotecalivrosemprestimos.demo.adapter.input;
-
-import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
-import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
-import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
-import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
-import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/usuarios")
-public class UsuarioControllerTest {
-
-    private final UsuarioInputPort usuarioInputPort;
-
-    private final UsuarioMapper usuarioMapper;
-
-    public UsuarioControllerTest(UsuarioInputPort usuarioInputPort, UsuarioMapper usuarioMapper) {
-        this.usuarioInputPort = usuarioInputPort;
-        this.usuarioMapper = usuarioMapper;
-    }
-
-
-    // CREATE
-    @PostMapping
-    public ResponseEntity<UsuarioRequest> criarUsuario(@Valid @RequestBody CriarUsuarioRequest request) {
-        CriarUsuarioRequest criarUsuarioRequest = usuarioMapper.toRequest(request);
-        UsuarioRequest usuarioNovo = usuarioInputPort.criarUsuario(request);
-        return ResponseEntity.status(201).body(usuarioNovo);
-    }
-
-    // READ
-    @GetMapping("/{id}")
-    public ResponseEntity<UsuarioRequest> buscarUsuarioPorId(@PathVariable Long id) {
-        UsuarioRequest usuario = usuarioInputPort.buscarPorId(id);
-        return ResponseEntity.ok(usuario);
-    }
-
-    // READ
-    @GetMapping
-    public ResponseEntity<List<UsuarioRequest>> listarLivros() {
-        List<UsuarioRequest> usuario = usuarioInputPort.listarTodos();
-        return ResponseEntity.ok(usuario);
-    }
-
-    // Relatório de usuários com empréstimos
-    @GetMapping("/com-emprestimos")
-    public ResponseEntity<List<UsuarioRequest>> listarUsuariosComEmprestimos() {
-        List<UsuarioRequest> usuarios = usuarioInputPort.listarUsuariosComEmprestimos();
-        return ResponseEntity.ok(usuarios);
-    }
-}
+//package br.com.efactor.chat.adapter.input;
+//
+//import br.com.efactor.chat.adapter.in.FeedbackController;
+//import br.com.efactor.chat.domain.usecase.FeedbackEntrevistaUseCase;
+//import br.com.efactor.chat.port.input.FeedbackEntrevistaInputPort;
+//import org.junit.jupiter.api.Assertions;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.DisplayName;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.extension.ExtendWith;
+//import org.mockito.InjectMocks;
+//import org.mockito.Mock;
+//import org.mockito.Mockito;
+//import org.springframework.test.context.junit.jupiter.SpringExtension;
+//
+//@ExtendWith(SpringExtension.class)
+//public class FeedControllerTest {
+//
+//    @InjectMocks
+//    private FeedbackController feedbackController;
+//
+//    //    @Mock
+//    private FeedbackEntrevistaInputPort feedbackEntrevistaInputPort;
+//
+//    @BeforeEach
+//    void setup() {
+//        feedbackEntrevistaInputPort = Mockito.mock(FeedbackEntrevistaUseCase.class);
+//    }
+//
+//    @Test
+//    @DisplayName("Deve retornar feedback de entrevista")
+//    void testFeedBackByUserSucess() {
+//        //given
+//        String comentario = "Comentario...";
+//
+//        //when
+//        long id = feedbackController.feedbackEntrevista(1, comentario);
+//
+//
+//        //then
+//        Assertions.assertEquals(1, id);
+//    }
+//
+//
+//
+//}
+//

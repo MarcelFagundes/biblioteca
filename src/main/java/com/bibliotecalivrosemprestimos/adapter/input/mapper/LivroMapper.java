@@ -6,10 +6,10 @@ import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.AtualizarLivroRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarLivroRequest;
+import com.bibliotecalivrosemprestimos.adapter.output.entity.LivroEntity;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-
 import java.time.LocalDateTime;
 
 @Mapper(componentModel = "spring")
@@ -18,8 +18,10 @@ public interface LivroMapper {
     LivroMapper INSTANCE =  Mappers.getMapper(LivroMapper.class);
 
     Livro toEntity(LivroRequest livroRequest);
+    LivroRequest toRequest(LivroEntity livroEntity);
     LivroRequest fromEntity(Livro livro);
-    CriarLivroRequest toRequest(CriarLivroRequest request);
+
+    CriarLivroRequest toRequest(LivroRequest request);
     AtualizarLivroRequest toRequest(AtualizarLivroRequest request);
 
     LivroComEmprestimoRequest toDto(Long id, String titulo, String autor, Long id1, String nome,

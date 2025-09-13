@@ -34,5 +34,5 @@ public interface EmprestimoOutputPort {
     List<Emprestimo> findEmprestimosAtrasados();
 
     // Método adicional para atualização
-    int update(Emprestimo emprestimo);
+    void update(Emprestimo emprestimo);
 }

@@ -22,5 +22,5 @@ public interface LivroOutputPort {
     List<Object[]> findLivrosEmprestados();
 
     // Método adicional para atualização
-    int update(Livro livro);
+    void update(Livro livro);
 }

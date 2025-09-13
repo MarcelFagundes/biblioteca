@@ -11,11 +11,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EmprestimoCaseConfig {
 
+    private EmprestimoOutputPort emprestimoOutputPort;
+
     @Bean
     public EmprestimoInputPort emprestimoInputPort(
             EmprestimoOutputPort emprestimoOutputPort,
             LivroOutputPort livroOutputPort,
             UsuarioOutputPort usuarioOutputPort) {
+            this.emprestimoOutputPort = emprestimoOutputPort;
             return new EmprestimoUseCase(emprestimoOutputPort, livroOutputPort, usuarioOutputPort);
     }
 }

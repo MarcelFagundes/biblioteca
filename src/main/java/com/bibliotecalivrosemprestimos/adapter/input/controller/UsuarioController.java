@@ -5,7 +5,6 @@ import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -23,12 +22,11 @@ public class UsuarioController {
         this.usuarioMapper = usuarioMapper;
     }
 
-
     // CREATE
     @PostMapping
     public ResponseEntity<UsuarioRequest> criarUsuario(@Valid @RequestBody CriarUsuarioRequest request) {
         CriarUsuarioRequest criarUsuarioRequest = usuarioMapper.toRequest(request);
-        UsuarioRequest usuarioNovo = usuarioInputPort.criarUsuario(request);
+        UsuarioRequest usuarioNovo = usuarioInputPort.criarUsuario(criarUsuarioRequest);
         return ResponseEntity.status(201).body(usuarioNovo);
     }
 

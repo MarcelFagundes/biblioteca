@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 public class Emprestimo {
 
     private Long id;
+    private Long usuarioId;
+    private String usuarioNome;
+    private String livroTitulo;
+    private Long livroId;
     private Livro livro;
     private Usuario usuario;
     private LocalDateTime retiradoEm;
@@ -16,25 +20,64 @@ public class Emprestimo {
     public Emprestimo() {
     }
 
-    public Emprestimo(Livro livro, Usuario usuario, LocalDateTime devolucaoPrevista) {
+    public Emprestimo(Livro livro, Usuario usuario, LocalDateTime retiradoEm,
+                      LocalDateTime devolucaoPrevista) {
         this();
         this.livro = livro;
         this.usuario = usuario;
+        this.retiradoEm = retiradoEm;
         this.devolucaoPrevista = devolucaoPrevista;
     }
 
-//    public Emprestimo(Long id, Livro livro, Usuario usuario, LocalDateTime retiradoEm, LocalDateTime devolucaoPrevista, LocalDateTime devolvidoEm) {
-//        this.id = id;
-//        this.livro = livro;
-//        this.usuario = usuario;
-//        this.retiradoEm = retiradoEm;
-//        this.devolucaoPrevista = devolucaoPrevista;
-//        this.devolvidoEm = devolvidoEm;
-//    }
+
+    public Emprestimo(Long id, Long usuarioId, String livroTitulo, Long livroId,  String usuarioNome,
+                      Livro livro, Usuario usuario, LocalDateTime retiradoEm, LocalDateTime devolucaoPrevista) {
+        this.id = id;
+        this.usuarioId = usuarioId;
+        this.livroTitulo = livroTitulo;
+        this.livroId = livroId;
+        this.usuarioNome = usuarioNome;
+        this.livro = livro;
+        this.usuario = usuario;
+        this.retiradoEm = retiradoEm;
+        this.devolucaoPrevista = devolucaoPrevista;
+    }
 
     // Getters e Setters
     public Long getId() {
         return id;
+    }
+
+    public Long getUsuarioId() {
+        return usuarioId;
+    }
+
+    public Long getLivroId() {
+        return livroId;
+    }
+
+    public void setLivroId(Long livroId) {
+        this.livroId = livroId;
+    }
+
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public String getUsuarioNome() {
+        return usuarioNome;
+    }
+
+    public void setUsuarioNome(String usuarioNome) {
+        this.usuarioNome = usuarioNome;
+    }
+
+    public String getLivroTitulo() {
+        return livroTitulo;
+    }
+
+    public void setLivroTitulo(String livroTitulo) {
+        this.livroTitulo = livroTitulo;
     }
 
     public Livro getLivro() {
@@ -92,6 +135,10 @@ public class Emprestimo {
     public String toString() {
         return "Emprestimo{" +
                 "id=" + id +
+                ", usuarioId=" + usuarioId +
+                ", usuarioNome='" + usuarioNome + '\'' +
+                ", livroTitulo='" + livroTitulo + '\'' +
+                ", livroId=" + livroId +
                 ", livro=" + livro +
                 ", usuario=" + usuario +
                 ", retiradoEm=" + retiradoEm +

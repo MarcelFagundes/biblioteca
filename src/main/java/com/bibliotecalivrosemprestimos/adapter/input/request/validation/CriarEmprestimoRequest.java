@@ -9,6 +9,7 @@ public record CriarEmprestimoRequest(
         Long livroId,
         @NotNull
         Long usuarioId,
+        LocalDateTime retiradoEm,
         @Future
         LocalDateTime devolucaoPrevista
 ) {}

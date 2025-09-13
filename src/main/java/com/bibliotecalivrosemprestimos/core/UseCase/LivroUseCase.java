@@ -1,11 +1,9 @@
 package com.bibliotecalivrosemprestimos.core.UseCase;
 
-import com.bibliotecalivrosemprestimos.adapter.input.mapper.EmprestimoMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.LivroMapper;
-import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
-import com.bibliotecalivrosemprestimos.adapter.input.request.EmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoRequest;
-import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
+import com.bibliotecalivrosemprestimos.adapter.output.repository.LivroRepository;
+import com.bibliotecalivrosemprestimos.adapter.output.repository.UsuarioRepository;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.port.input.LivroInputPort;
 import com.bibliotecalivrosemprestimos.port.output.LivroOutputPort;
@@ -20,6 +18,8 @@ import java.util.stream.Collectors;
 public class LivroUseCase implements LivroInputPort {
 
     private final LivroOutputPort livroOutputPort;
+
+//    private final LivroMapper livroMapper;
 
     public LivroUseCase(LivroOutputPort livroOutputPort) {
         this.livroOutputPort = livroOutputPort;
@@ -70,12 +70,28 @@ public class LivroUseCase implements LivroInputPort {
          Livro livro = livroOutputPort.findById(id)
                  .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
 
-         livro.setTitulo(request.titulo());
-         livro.setAutor(request.autor());
-         livro.setEstoque(request.estoque());
-         livro.setAtivo(request.ativo());
 
-         livro = livroOutputPort.save(livro);
+         if (request.titulo() != null) {
+             livro.setTitulo(request.titulo());
+         }
+
+         if (request.autor() != null) {
+             livro.setAutor(request.autor());
+         }
+
+         if (request.isbn() != null) {
+             livro.setIsbn(request.isbn());
+         }
+
+         if (request.estoque() != null) {
+             livro.setEstoque(request.estoque());
+         }
+
+         if (request.ativo() != null) {
+             livro.setAtivo(request.ativo());
+         }
+
+         livroOutputPort.update(livro);
 
          return LivroMapper.INSTANCE.fromEntity(livro);
      }
@@ -85,7 +101,7 @@ public class LivroUseCase implements LivroInputPort {
                 .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
 
         livro.exclusaoLogica();
-        livroOutputPort.save(livro);
+        livroOutputPort.update(livro);
     }
 
     public List<Livro> listarTodosLivros() {
