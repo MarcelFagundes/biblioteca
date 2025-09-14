@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION fn_atualizar_emprestimo(
     p_devolucao_prevista TIMESTAMP DEFAULT NULL,
     p_devolvido_em TIMESTAMP DEFAULT NULL
 )
-RETURNS INTEGER
+RETURNS BIGINT
 LANGUAGE plpgsql
 AS $$
 DECLARE

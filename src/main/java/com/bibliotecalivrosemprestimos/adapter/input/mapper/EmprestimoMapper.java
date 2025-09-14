@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface EmprestimoMapper {
+
     EmprestimoMapper INSTANCE =  Mappers.getMapper(EmprestimoMapper.class);
 
     Emprestimo toEntity(EmprestimoRequest emprestimoRequest);
@@ -17,4 +18,5 @@ public interface EmprestimoMapper {
     EmprestimoRequest fromEntity(Emprestimo emprestimo);
     CriarEmprestimoRequest toRequest(CriarEmprestimoRequest request);
     DevolverLivroRequest toRequest(DevolverLivroRequest request);
+
 }

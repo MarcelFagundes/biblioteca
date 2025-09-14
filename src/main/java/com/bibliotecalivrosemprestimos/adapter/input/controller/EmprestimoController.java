@@ -25,7 +25,6 @@ public class EmprestimoController {
         this.emprestimoMapper = emprestimoMapper;
     }
 
-
     // CREATE
     @PostMapping
     public ResponseEntity<EmprestimoRequest> criarEmprestimo(@Valid @RequestBody CriarEmprestimoRequest request) {
@@ -48,9 +47,9 @@ public class EmprestimoController {
     public ResponseEntity<EmprestimoRequest> registrarDevolucao(
             @PathVariable Long id,
             @Valid @RequestBody DevolverLivroRequest request) {
-        DevolverLivroRequest devolverLivro = emprestimoMapper.toRequest(request);
-        EmprestimoRequest emprestimoDevolver = emprestimoInputPort.registrarDevolucao(devolverLivro.emprestimoId());
-        return ResponseEntity.ok(emprestimoDevolver);
+        DevolverLivroRequest devolverLivroRequest = emprestimoMapper.toRequest(request);
+        EmprestimoRequest emprestimoDevolver = emprestimoInputPort.registrarDevolucao(id, devolverLivroRequest);
+        return ResponseEntity.status(201).body(emprestimoDevolver);
     }
 
     // Cálculo de multa

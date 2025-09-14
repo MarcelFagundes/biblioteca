@@ -24,9 +24,9 @@ public interface LivroMapper {
     CriarLivroRequest toRequest(LivroRequest request);
     AtualizarLivroRequest toRequest(AtualizarLivroRequest request);
 
-    LivroComEmprestimoRequest toDto(Long id, String titulo, String autor, Long id1, String nome,
-                                    LocalDateTime localDateTime, LocalDateTime localDateTime1,
-                                    LocalDateTime localDateTime2, boolean ativo, boolean atrasado);
+    LivroComEmprestimoRequest toDto(Long livroId, String livroTitulo, String livroAutor, Long usuarioId,
+                                    String usuarioNome, LocalDateTime retiradoEm, LocalDateTime devolucaoPrevista,
+                                    LocalDateTime devolvidoEm, boolean ativo, boolean atrasado);
 
     default LivroComEmprestimoRequest objectArrayToDto(Object[] result) {
         LivroRequest livro = (LivroRequest) result[0];

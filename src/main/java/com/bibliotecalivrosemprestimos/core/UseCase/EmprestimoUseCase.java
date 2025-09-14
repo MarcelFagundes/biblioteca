@@ -2,6 +2,7 @@ package com.bibliotecalivrosemprestimos.core.UseCase;
 
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.EmprestimoMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.MultaRequest;
+import com.bibliotecalivrosemprestimos.adapter.input.request.validation.DevolverLivroRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
@@ -79,6 +80,7 @@ public class EmprestimoUseCase implements EmprestimoInputPort {
      }
 
     public List<EmprestimoRequest> listarEmprestimos(Long usuarioId, Boolean ativo) {
+
         List<Emprestimo> emprestimos;
 
         if (usuarioId != null && ativo != null) {
@@ -104,21 +106,28 @@ public class EmprestimoUseCase implements EmprestimoInputPort {
                 .collect(Collectors.toList());
     }
 
-    public EmprestimoRequest registrarDevolucao(Long id) {
+    public EmprestimoRequest registrarDevolucao(Long id, DevolverLivroRequest request) {
         Emprestimo emprestimo = emprestimoOutputPort.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empréstimo não encontrado"));
+
 
         if (emprestimo.getDevolvidoEm() != null) {
             throw new BusinessException("Este empréstimo já foi devolvido");
         }
 
+        Livro livro = livroOutputPort.findById(emprestimo.getLivroId())
+                .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
+
         // Registra devolução
         emprestimo.setDevolvidoEm(LocalDateTime.now());
 
         // Atualiza estoque
-        Livro livro = emprestimo.getLivro();
-        livro.decrementarEstoque();
-        livroOutputPort.save(livro);
+//        Livro livro = emprestimo.getLivro();
+//        if (livro == null) {
+//            throw new IllegalStateException("Livro não encontrado para este empréstimo");
+//        }
+        livro.incrementarEstoque();
+        livroOutputPort.update(livro);
 
         emprestimo = emprestimoOutputPort.save(emprestimo);
         return EmprestimoMapper.INSTANCE.fromEntity(emprestimo);

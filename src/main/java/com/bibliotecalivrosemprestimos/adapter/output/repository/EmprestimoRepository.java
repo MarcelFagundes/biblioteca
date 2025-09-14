@@ -4,7 +4,6 @@ import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.port.output.EmprestimoOutputPort;
-import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -12,7 +11,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Repository
 public class EmprestimoRepository implements EmprestimoOutputPort {
@@ -33,7 +31,7 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
         emprestimo.setUsuarioNome(rs.getString("usuario_nome"));
         emprestimo.setLivroTitulo(rs.getString("livro_titulo"));
 
-        // Dados básicos do empréstimo
+        // Dados básicos do empréstimoq
         emprestimo.setId(rs.getLong("id"));
 
         emprestimo.setRetiradoEm(rs.getTimestamp("retirado_em").toLocalDateTime());
@@ -57,15 +55,14 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
 
         String sql = "SELECT * FROM fn_inserir_emprestimo(?, ?, ?, ?, ?) ";
         try {
-            jdbcTemplate.queryForObject(sql,
-                    Long.class,
+            jdbcTemplate.queryForObject(sql, Long.class,
                     emprestimo.getLivro().getId(),
                     emprestimo.getUsuario().getId(),
                     Timestamp.valueOf(emprestimo.getRetiradoEm()),
                     Timestamp.valueOf(emprestimo.getDevolucaoPrevista()),
                     emprestimo.getDevolvidoEm() != null ? Timestamp.valueOf(emprestimo.getDevolvidoEm()) : null);
         } catch (Exception e) {
-            throw new RuntimeException("Erro na atualização do emprestimo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro na criação do emprestimo: " + e.getMessage(), e);
         }
         return emprestimo;
     } else {
@@ -75,31 +72,32 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
         }
     }
 
-
     @Override
     public void update(Emprestimo emprestimo) {
-        String sql = "UPDATE emprestimo SET livro_id = ?, usuario_id = ?, retirado_em = ?, " +
-                "devolucao_prevista = ?, devolvido_em = ? WHERE usuario_id = ? ";
+//        String sql = "UPDATE emprestimo SET livro_id = ?, usuario_id = ?, retirado_em = ?, " +
+//                "devolucao_prevista = ?, devolvido_em = ? WHERE usuario_id = ? ";
 
-//        String sql = "SELECT * FROM fn_atualizar_emprestimo(?, ?, ?, ?, ?) ";
+        String sql = "SELECT * FROM fn_atualizar_emprestimo(?, ?, ?, ?, ?, ?) ";
         try {
-            jdbcTemplate.queryForObject(sql, Boolean.class,
-                    emprestimo.getLivro().getId(),
-                    emprestimo.getUsuario().getId(),
-                    Timestamp.valueOf(emprestimo.getRetiradoEm()),
-                    Timestamp.valueOf(emprestimo.getDevolucaoPrevista()),
-                    emprestimo.getDevolvidoEm() != null ? Timestamp.valueOf(emprestimo.getDevolvidoEm()) : null);
+            jdbcTemplate.queryForObject(sql, Long.class,
+                    emprestimo.getId(),
+                    emprestimo.getLivroId(),
+                    emprestimo.getUsuarioId(),
+                    emprestimo.getRetiradoEm(),
+                    emprestimo.getDevolucaoPrevista(),
+                    emprestimo.getDevolvidoEm()
+            );
         } catch (Exception e) {
             throw new RuntimeException("Erro na atualização do emprestimo: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public Optional<Emprestimo> findById(Long id) {
-//        String sql = "SELECT * FROM emprestimo WHERE id = ? RETURNING id";
-        String sql = "SELECT * FROM fn_emprestimos_por_usuario(?) ";
+    public Optional<Emprestimo> findById(Long usuario_id) {
+//        String sql = "SELECT * FROM emprestimo WHERE id = ? RETURNING usuario_id";
+        String sql = "SELECT * FROM fn_buscar_emprestimos_por_usuario(?)";
         try {
-            Emprestimo emprestimo = jdbcTemplate.queryForObject(sql, emprestimoRowMapper, id);
+            Emprestimo emprestimo = jdbcTemplate.queryForObject(sql, emprestimoRowMapper, usuario_id);
             return Optional.ofNullable(emprestimo);
         } catch (Exception e) {
             return Optional.empty();
@@ -109,7 +107,6 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
     @Override
     public List<Emprestimo> findAll() {
         String sql = "SELECT * FROM fn_emprestimos_completos()";
-
         return jdbcTemplate.query(sql, emprestimoRowMapper);
     }
 
@@ -184,4 +181,38 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
         String sql = "SELECT * FROM  fn_buscar_emprestimos_atrasados()";
         return jdbcTemplate.query(sql, emprestimoRowMapper);
     }
+
+//    @Override
+//    public Optional<Emprestimo> findById(Long id) {
+//        String sql = "SELECT e.*, l.* " +
+//                "FROM emprestimo e " +
+//                "INNER JOIN livro l ON e.livro_id = l.id " +
+//                "WHERE e.id = ?";
+//
+//        try {
+//            Emprestimo emprestimo = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+//                Emprestimo emp = new Emprestimo();
+//                emp.setId(rs.getLong("id"));
+//                emp.setRetiradoEm(rs.getTimestamp("retirado_em").toLocalDateTime());
+//                emp.setDevolucaoPrevista(rs.getTimestamp("devolucao_prevista").toLocalDateTime());
+//
+//                Timestamp devolvidoEm = rs.getTimestamp("devolvido_em");
+//                emp.setDevolvidoEm(devolvidoEm != null ? devolvidoEm.toLocalDateTime() : null);
+//
+//                // Carrega o livro
+//                Livro livro = new Livro();
+//                livro.setId(rs.getLong("livro_id"));
+//                livro.setTitulo(rs.getString("titulo"));
+//                livro.setEstoque(rs.getInt("estoque"));
+//                // ... outros campos do livro
+//                emp.setLivro(livro);
+//
+//                return emp;
+//            }, id);
+//
+//            return Optional.ofNullable(emprestimo);
+//        } catch (Exception e) {
+//            return Optional.empty();
+//        }
+//    }
 }

@@ -11,12 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
 import jakarta.validation.Valid;
 
-
-
 @RestController
 @RequestMapping("/livros")
 public class LivroController {
-
 
     private final LivroInputPort livroInputPort;
 

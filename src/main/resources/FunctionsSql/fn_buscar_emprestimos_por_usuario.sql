@@ -25,8 +25,8 @@ BEGIN
         l.titulo,
         u.nome
     FROM emprestimo e
-    LEFT JOIN livro l ON e.livro_id = l.id
-    LEFT JOIN usuario u ON e.usuario_id = u.id
+--    LEFT JOIN livro l ON e.livro_id = l.id
+--    LEFT JOIN usuario u ON e.usuario_id = u.id
     WHERE e.usuario_id = p_usuario_id
     ORDER BY e.retirado_em DESC;
 END;

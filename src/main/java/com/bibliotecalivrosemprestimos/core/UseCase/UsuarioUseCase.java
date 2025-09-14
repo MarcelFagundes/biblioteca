@@ -58,6 +58,6 @@ public class UsuarioUseCase implements UsuarioInputPort {
          return usuarioOutputPort.findUsuariosComEmprestimos()
                 .stream()
                 .map(UsuarioMapper.INSTANCE::objectArrayToDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
