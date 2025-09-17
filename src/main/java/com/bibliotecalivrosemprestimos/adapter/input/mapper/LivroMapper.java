@@ -11,6 +11,7 @@ import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface LivroMapper {
@@ -37,4 +38,10 @@ public interface LivroMapper {
                 emprestimo.retiradoEm(), emprestimo.devolucaoPrevista(), emprestimo.devolvidoEm(),
                 emprestimo.ativo(), emprestimo.atrasado());
     }
+
+    Livro toDomain(LivroEntity livroEntity);
+
+    LivroEntity toEntity(Livro livro);
+
+    List<Livro> toDomain(List<LivroEntity> livroEntity);
 }

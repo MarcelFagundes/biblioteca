@@ -8,6 +8,8 @@ import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
 
@@ -18,4 +20,7 @@ public interface UsuarioMapper {
     UsuarioRequest fromEntity(Usuario usuario);
     CriarUsuarioRequest toRequest(CriarUsuarioRequest request);
     UsuarioRequest objectArrayToDto(UsuarioComEmprestimosRequest usuarioComEmprestimosRequest);
+
+    Usuario toDomain(UsuarioEntity usuarioEntity);
+    List<Usuario> toDomain(List<UsuarioEntity> usuarioEntity);
 }

@@ -1,5 +1,8 @@
 package com.bibliotecalivrosemprestimos.adapter.output.entity;
 
+import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
+import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -7,45 +10,100 @@ import java.util.Objects;
 public class EmprestimoEntity {
 
     private Long id;
-    private LivroEntity livro;
-    private UsuarioEntity usuario;
+    private Long usuarioId;
+    private String usuarioNome;
+    private String livroTitulo;
+    private Long livroId;
+    private LivroEntity livroEntity;
+    private UsuarioEntity usuarioEntity;
     private LocalDateTime retiradoEm;
     private LocalDateTime devolucaoPrevista;
     private LocalDateTime devolvidoEm;
 
     // Construtores
     public EmprestimoEntity() {
-        this.retiradoEm = LocalDateTime.now();
     }
 
-    public EmprestimoEntity(LivroEntity livro, UsuarioEntity usuario, LocalDateTime devolucaoPrevista) {
+    public EmprestimoEntity(LivroEntity livroEntity, UsuarioEntity usuarioEntity, LocalDateTime retiradoEm,
+                      LocalDateTime devolucaoPrevista) {
         this();
-        this.livro = livro;
-        this.usuario = usuario;
+        this.livroEntity = livroEntity;
+        this.usuarioEntity = usuarioEntity;
+        this.retiradoEm = retiradoEm;
+        this.devolucaoPrevista = devolucaoPrevista;
+    }
+
+
+    public EmprestimoEntity(Long id, Long usuarioId, String livroTitulo, Long livroId,  String usuarioNome,
+                      LivroEntity livroEntity, UsuarioEntity usuarioEntity,
+                            LocalDateTime retiradoEm, LocalDateTime devolucaoPrevista) {
+        this.id = id;
+        this.usuarioId = usuarioId;
+        this.livroTitulo = livroTitulo;
+        this.livroId = livroId;
+        this.usuarioNome = usuarioNome;
+        this.livroEntity = livroEntity;
+        this.usuarioEntity = usuarioEntity;
+        this.retiradoEm = retiradoEm;
         this.devolucaoPrevista = devolucaoPrevista;
     }
 
     // Getters e Setters
+
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) { this.id = id; }
-
-    public LivroEntity getLivro() {
-        return livro;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setLivro(LivroEntity livro) {
-        this.livro = livro;
+    public Long getUsuarioId() {
+        return usuarioId;
     }
 
-    public UsuarioEntity getUsuario() {
-        return usuario;
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
-    public void setUsuario(UsuarioEntity usuario) {
-        this.usuario = usuario;
+    public String getUsuarioNome() {
+        return usuarioNome;
+    }
+
+    public void setUsuarioNome(String usuarioNome) {
+        this.usuarioNome = usuarioNome;
+    }
+
+    public String getLivroTitulo() {
+        return livroTitulo;
+    }
+
+    public void setLivroTitulo(String livroTitulo) {
+        this.livroTitulo = livroTitulo;
+    }
+
+    public Long getLivroId() {
+        return livroId;
+    }
+
+    public void setLivroId(Long livroId) {
+        this.livroId = livroId;
+    }
+
+    public LivroEntity getLivroEntity() {
+        return livroEntity;
+    }
+
+    public void setLivroEntity(LivroEntity livroEntity) {
+        this.livroEntity = livroEntity;
+    }
+
+    public UsuarioEntity getUsuarioEntity() {
+        return usuarioEntity;
+    }
+
+    public void setUsuarioEntity(UsuarioEntity usuarioEntity) {
+        this.usuarioEntity = usuarioEntity;
     }
 
     public LocalDateTime getRetiradoEm() {
@@ -82,24 +140,20 @@ public class EmprestimoEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EmprestimoEntity emprestimo = (EmprestimoEntity) o;
-        return Objects.equals(id, emprestimo.id);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "Emprestimo{" +
+        return "EmprestimoEntity{" +
                 "id=" + id +
-                ", livro=" + livro.getTitulo() +
-                ", usuario=" + usuario.getNome() +
+                ", usuarioId=" + usuarioId +
+                ", usuarioNome='" + usuarioNome + '\'' +
+                ", livroTitulo='" + livroTitulo + '\'' +
+                ", livroId=" + livroId +
+                ", livro=" + livroEntity +
+                ", usuario=" + usuarioEntity +
                 ", retiradoEm=" + retiradoEm +
                 ", devolucaoPrevista=" + devolucaoPrevista +
                 ", devolvidoEm=" + devolvidoEm +

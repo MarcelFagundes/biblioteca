@@ -8,6 +8,8 @@ import com.bibliotecalivrosemprestimos.core.domain.model.Emprestimo;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface EmprestimoMapper {
 
@@ -19,4 +21,9 @@ public interface EmprestimoMapper {
     CriarEmprestimoRequest toRequest(CriarEmprestimoRequest request);
     DevolverLivroRequest toRequest(DevolverLivroRequest request);
 
+    EmprestimoEntity toEntity(Emprestimo emprestimo);
+
+    Emprestimo toDomain(EmprestimoEntity emprestimoEntity);
+
+    List<Emprestimo> toDomain(List<EmprestimoEntity> emprestimoEntity);
 }

@@ -2,7 +2,6 @@ package com.bibliotecalivrosemprestimos.adapter.output.entity;
 
 import java.util.Objects;
 
-
 public class LivroEntity {
 
     private Long id;

@@ -1,11 +1,13 @@
 package com.bibliotecalivrosemprestimos.adapter.output.repository;
 
+import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
+import com.bibliotecalivrosemprestimos.adapter.output.entity.UsuarioEntity;
+import com.bibliotecalivrosemprestimos.adapter.output.repository.rowMapper.UsuarioRowMapper;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.port.output.UsuarioOutputPort;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Types;
@@ -16,20 +18,24 @@ import java.util.Optional;
 public class UsuarioRepository implements UsuarioOutputPort {
 
     private final JdbcTemplate jdbcTemplate;
+    private final UsuarioRowMapper usuarioRowMapper;
+    private final UsuarioMapper usuarioMapper;
 
-    public UsuarioRepository(JdbcTemplate jdbcTemplate) {
+    public UsuarioRepository(JdbcTemplate jdbcTemplate, UsuarioRowMapper usuarioRowMapper, UsuarioMapper usuarioMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.usuarioRowMapper = usuarioRowMapper;
+        this.usuarioMapper = usuarioMapper;
     }
 
     // RowMapper para converter ResultSet em UsuarioEntity
-    private final RowMapper<Usuario> usuarioRowMapper = (rs, rowNum) -> {
-        Usuario usuario = new Usuario();
-        usuario.setId(rs.getLong("id"));
-        usuario.setNome(rs.getString("nome"));
-        usuario.setEmail(rs.getString("email"));
-
-        return usuario;
-    };
+//    private final RowMapper<Usuario> usuarioRowMapper = (rs, rowNum) -> {
+//        Usuario usuario = new Usuario();
+//        usuario.setId(rs.getLong("id"));
+//        usuario.setNome(rs.getString("nome"));
+//        usuario.setEmail(rs.getString("email"));
+//
+//        return usuario;
+//    };
 
     @Override
     public Usuario save(Usuario usuario) {
@@ -73,7 +79,8 @@ public class UsuarioRepository implements UsuarioOutputPort {
         String sql = "SELECT * FROM fn_buscar_usuario_por_id(?)";
 //        String sql = "SELECT * FROM usuario WHERE id = ?";
         try {
-            Usuario usuario = jdbcTemplate.queryForObject(sql, usuarioRowMapper, id);
+            UsuarioEntity usuarioEntity = jdbcTemplate.queryForObject(sql, usuarioRowMapper, id);
+            Usuario usuario = usuarioMapper.toDomain(usuarioEntity);
             return Optional.ofNullable(usuario);
         } catch (Exception e) {
             return Optional.empty();
@@ -83,31 +90,55 @@ public class UsuarioRepository implements UsuarioOutputPort {
     @Override
     public List<Usuario> findAll() {
         String sql = "SELECT * FROM fn_buscar_todos_usuarios()";
-        return jdbcTemplate.query(sql, usuarioRowMapper);
+//        return jdbcTemplate.query(sql, usuarioRowMapper);
+        List<UsuarioEntity> usuarioEntity = jdbcTemplate.query(sql, usuarioRowMapper);
+        List<Usuario> usuario = usuarioMapper.toDomain(usuarioEntity);
+        return usuario;
     }
 
     @Override
     public void deleteById(Long id) {
 //        String sql = "DELETE FROM usuario WHERE id = ?";
         String sql = "SELECT * FROM fn_deletar_usuario()";
-        jdbcTemplate.update(sql, id);
+//        jdbcTemplate.update(sql, id);
+        try {
+            jdbcTemplate.query(sql, usuarioRowMapper);
+        } catch (Exception e) {
+            throw new RuntimeException("Usuário não encontrado: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public boolean existsByEmail(String email) {
 //        String sql = "SELECT COUNT(*) FROM usuario WHERE email = ?";
+//        String sql = "SELECT * FROM fn_verificar_email_existe(?)";
+//
+//        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+//        return count != null && count > 0;
         String sql = "SELECT * FROM fn_verificar_email_existe(?)";
+        try {
 
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
-        return count != null && count > 0;
+            Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+            return count != null && count > 0;
+        } catch (Exception e) {
+            throw new RuntimeException("Usuário não encontrado: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public Optional<Usuario> findByEmail(String email) {
 //        String sql = "SELECT * FROM usuario WHERE email = ?";
+//        String sql = "SELECT * FROM fn_buscar_usuario_por_email(?)";
+//        try {
+//            Usuario usuario = jdbcTemplate.queryForObject(sql, usuarioRowMapper, email);
+//            return Optional.ofNullable(usuario);
+//        } catch (Exception e) {
+//            return Optional.empty();
+//        }
         String sql = "SELECT * FROM fn_buscar_usuario_por_email(?)";
         try {
-            Usuario usuario = jdbcTemplate.queryForObject(sql, usuarioRowMapper, email);
+            UsuarioEntity usuarioEntity = jdbcTemplate.queryForObject(sql, usuarioRowMapper, email);
+            Usuario usuario = usuarioMapper.toDomain(usuarioEntity);
             return Optional.ofNullable(usuario);
         } catch (Exception e) {
             return Optional.empty();
