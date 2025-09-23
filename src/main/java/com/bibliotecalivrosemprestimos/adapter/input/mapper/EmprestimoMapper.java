@@ -15,15 +15,17 @@ public interface EmprestimoMapper {
 
     EmprestimoMapper INSTANCE =  Mappers.getMapper(EmprestimoMapper.class);
 
-    Emprestimo toEntity(EmprestimoRequest emprestimoRequest);
     EmprestimoRequest toRequest(EmprestimoEntity emprestimoEntity);
+
     EmprestimoRequest fromEntity(Emprestimo emprestimo);
+
     CriarEmprestimoRequest toRequest(CriarEmprestimoRequest request);
+
     DevolverLivroRequest toRequest(DevolverLivroRequest request);
 
-    EmprestimoEntity toEntity(Emprestimo emprestimo);
+    List<Emprestimo> toDomain(List<EmprestimoEntity> emprestimoEntity);
+
+    EmprestimoEntity toEntity(Emprestimo emprestimo1);
 
     Emprestimo toDomain(EmprestimoEntity emprestimoEntity);
-
-    List<Emprestimo> toDomain(List<EmprestimoEntity> emprestimoEntity);
 }

@@ -1,8 +1,5 @@
 package com.bibliotecalivrosemprestimos.adapter.output.entity;
 
-import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
-import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -137,11 +134,6 @@ public class EmprestimoEntity {
 
     public boolean isAtrasado() {
         return isAtivo() && LocalDateTime.now().isAfter(devolucaoPrevista);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
     @Override

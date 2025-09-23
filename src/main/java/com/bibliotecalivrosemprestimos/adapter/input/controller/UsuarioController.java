@@ -39,7 +39,7 @@ public class UsuarioController {
 
     // READ
     @GetMapping
-    public ResponseEntity<List<UsuarioRequest>> listarLivros() {
+    public ResponseEntity<List<UsuarioRequest>> listarUsuarios() {
         List<UsuarioRequest> usuario = usuarioInputPort.listarTodos();
         return ResponseEntity.ok(usuario);
     }

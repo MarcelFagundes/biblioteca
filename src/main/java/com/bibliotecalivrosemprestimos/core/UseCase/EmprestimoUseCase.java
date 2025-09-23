@@ -75,7 +75,7 @@ public class EmprestimoUseCase implements EmprestimoInputPort {
          livro.decrementarEstoque();
          livroOutputPort.update(livro);
 
-         emprestimo = emprestimoOutputPort.save(emprestimo);
+//         emprestimo = emprestimoOutputPort.save(emprestimo);
          return EmprestimoMapper.INSTANCE.fromEntity(emprestimo);
      }
 

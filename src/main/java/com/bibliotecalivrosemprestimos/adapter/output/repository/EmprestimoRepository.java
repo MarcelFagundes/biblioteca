@@ -9,6 +9,7 @@ import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.port.output.EmprestimoOutputPort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,32 +56,41 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
 //        return emprestimo;
 //    };
 
+//    @Override
+//    public CriarEmprestimoRequest save(Emprestimo emprestimo) {
+//        return null;
+//    }
+
     @Override
     public Emprestimo save(Emprestimo emprestimo) {
-        EmprestimoEntity emprestimoEntity = emprestimoMapper.toEntity(emprestimo);
-            if (emprestimoEntity.getId() == null) {
+
+        Emprestimo emprestimo1 = new Emprestimo();
+
+        EmprestimoEntity emprestimoEntity = emprestimoMapper.toEntity(emprestimo1);
+
+            if (emprestimoEntity.getLivroId() == null) {
                 // INSERT
 //                String sql = "INSERT INTO emprestimo (livro_id, usuario_id, retirado_em, devolucao_prevista, devolvido_em) " +
 //                        "VALUES (?, ?, ?, ?, ?) RETURNING id ";
 
-                String sql = "SELECT * FROM fn_inserir_emprestimo(?, ?, ?, ?, ?) ";
+                String sql = "SELECT FROM fn_inserir_emprestimo(?, ?, ?, ?, ?) ";
 
                try {
                     Long generatedId = jdbcTemplate.queryForObject(
                             sql,
                             Long.class,
-                            emprestimoEntity.getLivroEntity().getId(),
-                            emprestimoEntity.getUsuarioEntity().getId(),
+                            emprestimoEntity.getLivroId(),
+                            emprestimoEntity.getUsuarioId(),
                             Timestamp.valueOf(emprestimoEntity.getRetiradoEm()),
                             Timestamp.valueOf(emprestimoEntity.getDevolucaoPrevista()),
-                            emprestimoEntity.getDevolvidoEm() != null ?
-                                    emprestimoEntity.getDevolvidoEm() : null
+                            emprestimoEntity.getDevolucaoPrevista() != null ?
+                                    Timestamp.valueOf(emprestimoEntity.getDevolucaoPrevista()) : null
                     );
 
 
                     emprestimoEntity.setId(generatedId);
 
-                   Emprestimo emprestimoNovo = emprestimoMapper.toDomain(emprestimoEntity);
+                    Emprestimo emprestimoNovo = emprestimoMapper.toDomain(emprestimoEntity);
 
                     return emprestimoNovo;
 
@@ -95,27 +105,6 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
     }
 
 
-
-
-//        String sql = "SELECT * FROM fn_inserir_emprestimo(?, ?, ?, ?, ?) ";
-//        try {
-//            jdbcTemplate.queryForObject(sql, Long.class,
-//                    emprestimo.getLivro().getId(),
-//                    emprestimo.getUsuario().getId(),
-//                    Timestamp.valueOf(emprestimo.getRetiradoEm()),
-//                    Timestamp.valueOf(emprestimo.getDevolucaoPrevista()),
-//                    emprestimo.getDevolvidoEm() != null ? Timestamp.valueOf(emprestimo.getDevolvidoEm()) : null);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Erro na criação do emprestimo: " + e.getMessage(), e);
-//        }
-//        return emprestimo;
-//    } else {
-//            // UPDATE
-//            update(emprestimo);
-//            return emprestimo;
-//        }
-
-
     @Override
     public void update(Emprestimo emprestimo) {
         EmprestimoEntity emprestimoEntity = emprestimoMapper.toEntity(emprestimo);
@@ -126,8 +115,8 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
         try {
             jdbcTemplate.queryForObject(sql, Long.class,
                     emprestimoEntity.getId(),
-                    emprestimoEntity.getLivroEntity().getId(),
-                    emprestimoEntity.getUsuarioEntity().getId(),
+                    emprestimoEntity.getLivroId(),
+                    emprestimoEntity.getUsuarioId(),
                     emprestimoEntity.getRetiradoEm(),
                     emprestimoEntity.getDevolucaoPrevista(),
                     emprestimoEntity.getDevolvidoEm()
@@ -151,6 +140,7 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
         try {
             EmprestimoEntity emprestimoEntity = jdbcTemplate.queryForObject(sql, emprestimoRowMapper, usuario_id);
             Emprestimo emprestimo = emprestimoMapper.toDomain(emprestimoEntity);
+            System.out.println(emprestimo.getLivro().getTitulo());
             return Optional.ofNullable(emprestimo);
         } catch (Exception e) {
             return Optional.empty();
@@ -180,14 +170,14 @@ public class EmprestimoRepository implements EmprestimoOutputPort {
 
     @Override
     public List<Emprestimo> findByUsuarioId(Long usuario_id) {
-//        String sql = "SELECT e.*, l.titulo, u.nome " +
-//                "FROM emprestimo e " +
-//                "LEFT JOIN livro l ON e.livro_id = l.id " +
-//                "LEFT JOIN usuario u ON e.usuario_id = u.id " +
-//                "WHERE e.usuario_id = ?" ;
+        String sql = "SELECT e.*, l.titulo, u.nome " +
+                "FROM emprestimo e " +
+                "LEFT JOIN livro l ON e.livro_id = l.id " +
+                "LEFT JOIN usuario u ON e.usuario_id = u.id " +
+                "WHERE e.usuario_id = ?" ;
 //        String sql = "SELECT * FROM fn_buscar_emprestimos_por_usuario(?) ";
 //        return jdbcTemplate.query(sql, emprestimoRowMapper, usuario_id);
-        String sql = "SELECT * FROM fn_buscar_emprestimos_por_usuario(?) ";
+//        String sql = "SELECT * FROM fn_buscar_emprestimos_por_usuario(?) ";
         try {
             List<EmprestimoEntity> emprestimoEntity =  jdbcTemplate.query(sql, emprestimoRowMapper, usuario_id);
             List<Emprestimo> emprestimo = emprestimoMapper.toDomain(emprestimoEntity);

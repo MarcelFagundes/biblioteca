@@ -28,8 +28,8 @@ public class EmprestimoController {
     // CREATE
     @PostMapping
     public ResponseEntity<EmprestimoRequest> criarEmprestimo(@Valid @RequestBody CriarEmprestimoRequest request) {
-        CriarEmprestimoRequest criarEmprestimoRequest = emprestimoMapper.toRequest(request);
-        EmprestimoRequest emprestimoNovo = emprestimoInputPort.criarEmprestimo(criarEmprestimoRequest);
+        CriarEmprestimoRequest criarEmprestimo = emprestimoMapper.toRequest(request);
+        EmprestimoRequest emprestimoNovo = emprestimoInputPort.criarEmprestimo(criarEmprestimo);
         return ResponseEntity.status(201).body(emprestimoNovo);
     }
 
