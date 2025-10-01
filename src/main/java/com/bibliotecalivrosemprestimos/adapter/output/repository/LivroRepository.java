@@ -96,9 +96,9 @@ public class LivroRepository implements LivroOutputPort {
 //            throw new RuntimeException("Livro não encontrado: " + e.getMessage(), e);
 //        }
         try {
-            LivroEntity livroEntity = jdbcTemplate.queryForObject(sql, livroRowMapper, id);
-            Livro livro = livroMapper.toDomain(livroEntity);
-            return Optional.ofNullable(livro);
+            List<LivroEntity> livroEntity = jdbcTemplate.query(sql, livroRowMapper, id);
+            List<Livro> livro = livroMapper.toDomain(livroEntity);
+            return livro.stream().findFirst();
         } catch (Exception e) {
             throw new RuntimeException("Livro não encontrado: " + e.getMessage(), e);
         }

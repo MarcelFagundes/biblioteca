@@ -19,7 +19,7 @@ public interface UsuarioMapper {
     UsuarioRequest toRequest(UsuarioEntity usuarioEntity);
     UsuarioRequest fromEntity(Usuario usuario);
     CriarUsuarioRequest toRequest(CriarUsuarioRequest request);
-    UsuarioRequest objectArrayToDto(UsuarioComEmprestimosRequest usuarioComEmprestimosRequest);
+    UsuarioComEmprestimosRequest objectArrayToDto(UsuarioComEmprestimosRequest usuarioComEmprestimosRequest);
 
     Usuario toDomain(UsuarioEntity usuarioEntity);
     List<Usuario> toDomain(List<UsuarioEntity> usuarioEntity);

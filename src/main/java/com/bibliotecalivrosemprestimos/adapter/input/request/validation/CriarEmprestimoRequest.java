@@ -11,5 +11,6 @@ public record CriarEmprestimoRequest(
         Long usuarioId,
         LocalDateTime retiradoEm,
         @Future
-        LocalDateTime devolucaoPrevista
+        LocalDateTime devolucaoPrevista,
+        LocalDateTime devolvidoEm
 ) {}

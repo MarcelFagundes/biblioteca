@@ -43,7 +43,7 @@ public class EmprestimoController {
     }
 
     // UPDATE (devolução)
-    @PutMapping("/{id}/devolver")
+    @PutMapping("/devolver/{id}")
     public ResponseEntity<EmprestimoRequest> registrarDevolucao(
             @PathVariable Long id,
             @Valid @RequestBody DevolverLivroRequest request) {
@@ -53,7 +53,7 @@ public class EmprestimoController {
     }
 
     // Cálculo de multa
-    @GetMapping("/{id}/multa")
+    @GetMapping("/multa/{id}")
     public ResponseEntity<MultaRequest> calcularMulta(@PathVariable Long id) {
         MultaRequest multa = emprestimoInputPort.calcularMulta(id);
         return ResponseEntity.ok(multa);

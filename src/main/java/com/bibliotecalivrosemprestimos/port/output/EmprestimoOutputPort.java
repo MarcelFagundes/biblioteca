@@ -12,7 +12,7 @@ public interface EmprestimoOutputPort {
     Emprestimo save(Emprestimo emprestimo);
 
     // Busca empréstimos por ID
-    Optional<Emprestimo> findById(Long id);
+    Optional<Emprestimo> findById(Long usuarioId);
 
     // Busca todos os empréstimos
     List<Emprestimo> findAll();
@@ -32,6 +32,7 @@ public interface EmprestimoOutputPort {
     boolean existsByLivroAndUsuarioAndDevolvidoEmIsNull(Livro livro, Usuario usuario);
     List<Emprestimo> findByDevolvidoEmIsNullAndDevolucaoPrevistaBefore(LocalDateTime data);
     List<Emprestimo> findEmprestimosAtrasados();
+    Optional<Emprestimo> buscarEmprestimoAtivoPorUsuarioELivro(Long usuarioId, Long livroId);
 
     // Método adicional para atualização
     void update(Emprestimo emprestimo);

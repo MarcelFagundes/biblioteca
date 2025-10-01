@@ -5,6 +5,7 @@ import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarEmp
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.DevolverLivroRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EmprestimoInputPort {
     EmprestimoRequest criarEmprestimo(CriarEmprestimoRequest request);

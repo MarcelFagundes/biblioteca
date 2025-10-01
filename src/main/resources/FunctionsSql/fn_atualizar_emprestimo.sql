@@ -2,9 +2,9 @@ CREATE OR REPLACE FUNCTION fn_atualizar_emprestimo(
     p_id BIGINT,
     p_livro_id BIGINT,
     p_usuario_id BIGINT,
-    p_retirado_em TIMESTAMP DEFAULT NULL,
-    p_devolucao_prevista TIMESTAMP DEFAULT NULL,
-    p_devolvido_em TIMESTAMP DEFAULT NULL
+    p_retirado_em TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
+    p_devolucao_prevista TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
+    p_devolvido_em TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL
 )
 RETURNS BIGINT
 LANGUAGE plpgsql

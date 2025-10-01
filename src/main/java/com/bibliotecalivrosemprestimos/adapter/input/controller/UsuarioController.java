@@ -1,6 +1,8 @@
 package com.bibliotecalivrosemprestimos.adapter.input.controller;
 
+import com.bibliotecalivrosemprestimos.adapter.input.controller.swagger.UsuarioControllerSwagger;
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
+import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
 import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-public class UsuarioController {
+public class UsuarioController implements UsuarioControllerSwagger {
 
     private final UsuarioInputPort usuarioInputPort;
 
@@ -46,8 +48,8 @@ public class UsuarioController {
 
     // Relatório de usuários com empréstimos
     @GetMapping("/com-emprestimos")
-    public ResponseEntity<List<UsuarioRequest>> listarUsuariosComEmprestimos() {
-        List<UsuarioRequest> usuarios = usuarioInputPort.listarUsuariosComEmprestimos();
+    public ResponseEntity<List<UsuarioComEmprestimosRequest>> listarUsuariosComEmprestimos() {
+        List<UsuarioComEmprestimosRequest> usuarios = usuarioInputPort.listarUsuariosComEmprestimos();
         return ResponseEntity.ok(usuarios);
     }
 }

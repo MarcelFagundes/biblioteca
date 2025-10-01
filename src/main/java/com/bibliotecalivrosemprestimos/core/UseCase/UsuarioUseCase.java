@@ -1,6 +1,7 @@
 package com.bibliotecalivrosemprestimos.core.UseCase;
 
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
+import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import com.bibliotecalivrosemprestimos.core.domain.model.Usuario;
 import com.bibliotecalivrosemprestimos.adapter.input.exception.BusinessException;
@@ -53,7 +54,7 @@ public class UsuarioUseCase implements UsuarioInputPort {
     }
 
     @Override
-    public List<UsuarioRequest> listarUsuariosComEmprestimos() {
+    public List<UsuarioComEmprestimosRequest> listarUsuariosComEmprestimos() {
 
          return usuarioOutputPort.findUsuariosComEmprestimos()
                 .stream()
