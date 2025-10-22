@@ -1,18 +1,19 @@
 package com.bibliotecalivrosemprestimos.adapter.input.controller;
 
+import com.bibliotecalivrosemprestimos.adapter.input.controller.swagger.UsuarioControllerSwagger;
 import com.bibliotecalivrosemprestimos.adapter.input.mapper.UsuarioMapper;
+import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioComEmprestimosRequest;
 import com.bibliotecalivrosemprestimos.port.input.UsuarioInputPort;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarUsuarioRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.UsuarioRequest;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-public class UsuarioController {
+public class UsuarioController implements UsuarioControllerSwagger {
 
     private final UsuarioInputPort usuarioInputPort;
 
@@ -23,12 +24,11 @@ public class UsuarioController {
         this.usuarioMapper = usuarioMapper;
     }
 
-
     // CREATE
     @PostMapping
     public ResponseEntity<UsuarioRequest> criarUsuario(@Valid @RequestBody CriarUsuarioRequest request) {
         CriarUsuarioRequest criarUsuarioRequest = usuarioMapper.toRequest(request);
-        UsuarioRequest usuarioNovo = usuarioInputPort.criarUsuario(request);
+        UsuarioRequest usuarioNovo = usuarioInputPort.criarUsuario(criarUsuarioRequest);
         return ResponseEntity.status(201).body(usuarioNovo);
     }
 
@@ -41,15 +41,15 @@ public class UsuarioController {
 
     // READ
     @GetMapping
-    public ResponseEntity<List<UsuarioRequest>> listarLivros() {
+    public ResponseEntity<List<UsuarioRequest>> listarUsuarios() {
         List<UsuarioRequest> usuario = usuarioInputPort.listarTodos();
         return ResponseEntity.ok(usuario);
     }
 
     // Relatório de usuários com empréstimos
     @GetMapping("/com-emprestimos")
-    public ResponseEntity<List<UsuarioRequest>> listarUsuariosComEmprestimos() {
-        List<UsuarioRequest> usuarios = usuarioInputPort.listarUsuariosComEmprestimos();
+    public ResponseEntity<List<UsuarioComEmprestimosRequest>> listarUsuariosComEmprestimos() {
+        List<UsuarioComEmprestimosRequest> usuarios = usuarioInputPort.listarUsuariosComEmprestimos();
         return ResponseEntity.ok(usuarios);
     }
 }

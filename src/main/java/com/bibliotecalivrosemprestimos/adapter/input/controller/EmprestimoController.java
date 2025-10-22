@@ -7,7 +7,6 @@ import com.bibliotecalivrosemprestimos.port.input.EmprestimoInputPort;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarEmprestimoRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.DevolverLivroRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -17,22 +16,20 @@ import java.util.List;
 @RequestMapping("/emprestimos")
 public class EmprestimoController {
 
-
     private final EmprestimoInputPort emprestimoInputPort;
 
-    @Autowired
-    private EmprestimoMapper emprestimoMapper;
+    private final EmprestimoMapper emprestimoMapper;
 
-    public EmprestimoController(EmprestimoInputPort emprestimoInputPort) {
+    public EmprestimoController(EmprestimoInputPort emprestimoInputPort, EmprestimoMapper emprestimoMapper) {
         this.emprestimoInputPort =  emprestimoInputPort;
+        this.emprestimoMapper = emprestimoMapper;
     }
-
 
     // CREATE
     @PostMapping
     public ResponseEntity<EmprestimoRequest> criarEmprestimo(@Valid @RequestBody CriarEmprestimoRequest request) {
-        CriarEmprestimoRequest criarEmprestimoRequest = emprestimoMapper.toRequest(request);
-        EmprestimoRequest emprestimoNovo = emprestimoInputPort.criarEmprestimo(request);
+        CriarEmprestimoRequest criarEmprestimo = emprestimoMapper.toRequest(request);
+        EmprestimoRequest emprestimoNovo = emprestimoInputPort.criarEmprestimo(criarEmprestimo);
         return ResponseEntity.status(201).body(emprestimoNovo);
     }
 
@@ -46,17 +43,17 @@ public class EmprestimoController {
     }
 
     // UPDATE (devolução)
-    @PutMapping("/{id}/devolver")
+    @PutMapping("/devolver/{id}")
     public ResponseEntity<EmprestimoRequest> registrarDevolucao(
             @PathVariable Long id,
             @Valid @RequestBody DevolverLivroRequest request) {
         DevolverLivroRequest devolverLivroRequest = emprestimoMapper.toRequest(request);
-        EmprestimoRequest emprestimoDevolver = emprestimoInputPort.registrarDevolucao(id);
-        return ResponseEntity.ok(emprestimoDevolver);
+        EmprestimoRequest emprestimoDevolver = emprestimoInputPort.registrarDevolucao(id, devolverLivroRequest);
+        return ResponseEntity.status(201).body(emprestimoDevolver);
     }
 
     // Cálculo de multa
-    @GetMapping("/{id}/multa")
+    @GetMapping("/multa/{id}")
     public ResponseEntity<MultaRequest> calcularMulta(@PathVariable Long id) {
         MultaRequest multa = emprestimoInputPort.calcularMulta(id);
         return ResponseEntity.ok(multa);

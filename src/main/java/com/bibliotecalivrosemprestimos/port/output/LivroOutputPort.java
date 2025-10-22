@@ -4,6 +4,7 @@ import com.bibliotecalivrosemprestimos.core.domain.model.Livro;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface LivroOutputPort {
     // Métodos CRUD básicos
     Livro save(Livro livro);
@@ -22,5 +23,5 @@ public interface LivroOutputPort {
     List<Object[]> findLivrosEmprestados();
 
     // Método adicional para atualização
-    int update(Livro livro);
+    void update(Livro livro);
 }

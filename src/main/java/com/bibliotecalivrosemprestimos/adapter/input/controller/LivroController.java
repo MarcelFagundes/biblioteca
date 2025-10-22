@@ -6,26 +6,22 @@ import com.bibliotecalivrosemprestimos.adapter.input.request.LivroComEmprestimoR
 import com.bibliotecalivrosemprestimos.port.input.LivroInputPort;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.AtualizarLivroRequest;
 import com.bibliotecalivrosemprestimos.adapter.input.request.validation.CriarLivroRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.bibliotecalivrosemprestimos.adapter.input.request.LivroRequest;
 import jakarta.validation.Valid;
 
-
-
 @RestController
 @RequestMapping("/livros")
 public class LivroController {
 
+    private final LivroInputPort livroInputPort;
 
-    private LivroInputPort livroInputPort;
+    private final LivroMapper livroMapper;
 
-    @Autowired
-    private LivroMapper livroMapper;
-
-    public LivroController(LivroInputPort livroInputPort) {
+    public LivroController(LivroInputPort livroInputPort, LivroMapper livroMapper) {
         this.livroInputPort =  livroInputPort;
+        this.livroMapper = livroMapper;
     }
 
     // READ
@@ -39,7 +35,7 @@ public class LivroController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<LivroRequest> criarLivro(@RequestBody CriarLivroRequest request) {
+    public ResponseEntity<LivroRequest> criarLivro(@RequestBody LivroRequest request) {
         CriarLivroRequest criarLivroRequest = livroMapper.toRequest(request);
         LivroRequest livroNovo = livroInputPort.criarLivro(criarLivroRequest);
         return ResponseEntity.status(201).body(livroNovo);
@@ -57,8 +53,8 @@ public class LivroController {
             @PathVariable Long id,
             @Valid @RequestBody AtualizarLivroRequest request) {
         AtualizarLivroRequest atualizarLivroRequest = livroMapper.toRequest(request);
-        LivroRequest livroAtualizar = livroInputPort.atualizarLivro(id, request);
-        return ResponseEntity.ok(livroAtualizar);
+        LivroRequest livroAtualizar = livroInputPort.atualizarLivro(id, atualizarLivroRequest);
+        return ResponseEntity.status(201).body(livroAtualizar);
     }
 
     // DELETE (lógico)
